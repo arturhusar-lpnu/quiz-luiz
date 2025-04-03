@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18237537585",
+    "project_id": "quiz-luiz",
+    "storage_bucket": "quiz-luiz.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18237537585:android:fe9b7e3ac9b83987cc4410",
+        "android_client_info": {
+          "package_name": "com.example.fluter_prjcts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiatTmImAs0nO644H98bdytvm00Ulg3k4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

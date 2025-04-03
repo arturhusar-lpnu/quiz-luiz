@@ -1,0 +1,1 @@
+enum GameMode {deathRun, firstTo15, inARow}
