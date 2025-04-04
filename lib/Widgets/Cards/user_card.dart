@@ -1,10 +1,10 @@
 import 'package:fluter_prjcts/Actions/AnimatedButton/invite_player.button.dart';
-import 'package:fluter_prjcts/Models/user.dart';
+import 'package:fluter_prjcts/Models/player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class UserCard extends StatelessWidget {
-  final User user;
+class PlayerCard extends StatelessWidget {
+  final Player player;
   final String userId;
   final Color mainColor;
   final TextStyle usernameStyle;
@@ -12,9 +12,9 @@ class UserCard extends StatelessWidget {
   final String selectedOpponentId;
   final double headerWidth;
 
-  const UserCard({
+  const PlayerCard({
     super.key,
-    required this.user,
+    required this.player,
     required this.userId,
     required this.mainColor,
     required this.usernameStyle,
@@ -23,8 +23,8 @@ class UserCard extends StatelessWidget {
     this.headerWidth = 100,
   });
 
-  Future<ImageProvider> _fetchProfileImage(User user) async {
-    final String imagePath = 'assets/user-profile/${user.id}.png';
+  Future<ImageProvider> _fetchProfileImage(Player player) async {
+    final String imagePath = 'assets/user-profile/${player.id}.png';
     try {
       await rootBundle.load(imagePath);
       return AssetImage(imagePath);
@@ -54,7 +54,7 @@ class UserCard extends StatelessWidget {
               ),
               child:
               FutureBuilder<ImageProvider>(
-                  future: _fetchProfileImage(user),
+                  future: _fetchProfileImage(player),
                   builder: (context, snapshot) {
                     // Handling the different states of the Future
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -91,7 +91,7 @@ class UserCard extends StatelessWidget {
           Expanded(
             child:
             Text(
-              user.username,
+              player.username,
               style: usernameStyle,
               overflow: TextOverflow.ellipsis,
             ),
@@ -103,9 +103,9 @@ class UserCard extends StatelessWidget {
               fontSize: 20,
               color: mainColor,
               userId: userId,
-              opponentId: user.id,
+              opponentId: player.id,
               onInviteTapped: onInviteTapped,
-              isSelected: selectedOpponentId.isNotEmpty && selectedOpponentId == user.id
+              isSelected: selectedOpponentId.isNotEmpty && selectedOpponentId == player.id
           ),
           const SizedBox(width: 12)
         ],

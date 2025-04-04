@@ -26,7 +26,7 @@ class AnswerChoiceCard extends StatefulWidget {
 }
 
 class AnswerChoiceState extends State<AnswerChoiceCard> {
-  late Answer answer = Answer(content: "", isCorrect: false);
+  Answer answer = Answer(id: "", questionId: "", content: "", isCorrect: false);
   final TextEditingController _textController = TextEditingController();
 
   @override

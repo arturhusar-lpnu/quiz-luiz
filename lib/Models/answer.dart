@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Answer {
   final String id;
-  final String content;
-  final bool isCorrect;
+  String content;
+  bool isCorrect;
   final String? questionId;
 
   Answer({

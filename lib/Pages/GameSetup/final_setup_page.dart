@@ -3,9 +3,10 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Actions/Buttons/create_game_button.dart';
 import 'package:fluter_prjcts/Models/game.dart';
-import 'package:fluter_prjcts/Models/match_details.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
-import 'package:fluter_prjcts/Models/user.dart';
+import "package:fluter_prjcts/Firestore/Player/player.firestore.dart";
+import "package:fluter_prjcts/Firestore/Topic/topic.firestore.dart";
+import 'package:fluter_prjcts/Models/player.dart';
 import 'package:fluter_prjcts/Models/Enums/game_type.enum.dart';
 import 'package:fluter_prjcts/Models/Enums/game_mode.enum.dart';
 import 'package:fluter_prjcts/Widgets/Cards/game_specs_card.dart';
@@ -32,41 +33,47 @@ class FinalSetupPage extends StatefulWidget {
 }
 
 class FinalSetupState extends State<FinalSetupPage> {
-  User? selectedOpponent;
   Set<Topic> selectedTopicsData = HashSet<Topic>();
 
-  // Function to fetch opponent data by ID
-  Future<User> fetchOpponentData(String opponentId) async {
-    // Simulate network delay
-    await Future.delayed(Duration(seconds: 2));
-    // Replace with actual data fetching logic
-    return User(id: opponentId, username: "OpponentUsername"); // Mock data
+  Future<Player> fetchOpponentData(String opponentId) async {
+    var opponentPlayer = await getPlayer(opponentId);
+
+    return opponentPlayer;
   }
 
-  // Function to fetch topics data
-  Future<Set<Topic>> fetchTopicsData(Set<String> topicIds) async {
-    // Simulate network delay
-    await Future.delayed(Duration(seconds: 2));
-    // Replace with actual data fetching logic
-    return {Topic(id: "1", title: "Topic 1", description: "Topic 1 Description", questions: [])}; // Mock data
+  Future<List<Topic>> fetchTopicsData(Set<String> topicIds) async {
+    List<Topic> topics =  await getTopics();
+    
+    return topics.where((t) => topicIds.contains(t.id)).toList();
   }
 
-  // Function to fetch both opponent and topic data
+
   Future<Map<String, dynamic>> fetchData() async {
     final opponent = await fetchOpponentData(widget.selectedOpponentId);
     final topics = await fetchTopicsData(widget.selectedTopicsIds);
-    return {"opponent": opponent, "topics": topics};
+    final currentPlayer = await fetchCurrPlayer();
+    return {"current_player": currentPlayer, "opponent": opponent, "topics": topics};
   }
+
+  Future<Player> fetchCurrPlayer() async{
+    var currPl =  await getCurrentPlayer();
+
+    if(currPl == null) {
+      throw Exception("No Current Player Found");
+    }
+
+    return currPl;
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return LoadingScreen<Map<String, dynamic>>(
       future: fetchData, // Pass fetchData as the future
       builder: (context, data) {
-        final opponent = data["opponent"] as User;
-        final topics = data["topics"] as Set<Topic>;
-
-        String gameId = "#1245"; // Example game ID, replace with your logic
+        final Player opponent = data["opponent"] as Player;
+        final Player currentPlayer = data["current_player"] as Player;
+        final List<Topic> topics = data["topics"] as List<Topic>;
 
         return Container(
           padding: const EdgeInsets.all(16),
@@ -84,24 +91,22 @@ class FinalSetupState extends State<FinalSetupPage> {
               const SizedBox(height: 20),
               Center(
                 child: GameSpecsCard(
-                  gameDetails: Game(
-                    matchDetails: MatchDetails(
-                      title: "",
-                      type: widget.selectedGameType?.name ?? GameType.ranked.name,
-                      topics: widget.selectedTopicsIds.toString(),
-                      mode: widget.selectedGameMode?.name ?? GameMode.deathRun.name,
-                    ),
-                    id: gameId,
-                    users: [
-                      opponent,
-                      User(id: widget.currentUserId, username: "CurrentUser"),
-                    ],
+                  game: Game(
+                    id: "",
+                    title: '',
+                    mode: widget.selectedGameMode!,
+                    type: widget.selectedGameType!,
                   ),
+                  players: [
+                    currentPlayer,
+                    opponent
+                  ],
+                  topics : topics,
                   width: 350,
                   height: 300,
                   headerBackColor: Color(0xFF5DD39E),
                   titleColor: Color(0xFF30323D),
-                  titleText: "Duel with ${opponent.id} ${opponent.username}\nGame Id: $gameId",
+                  titleText: "Duel with ${opponent.id} ${opponent.username}",
                 ),
               ),
 
@@ -116,7 +121,6 @@ class FinalSetupState extends State<FinalSetupPage> {
                   ),
                 ),
               ),
-
             ],
           ),
         );

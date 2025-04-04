@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluter_prjcts/Models/question.dart';
+import 'package:fluter_prjcts/Models/topic.dart';
 
 Future<void> addTopic(String title, String description) async{
   try {
@@ -11,19 +13,24 @@ Future<void> addTopic(String title, String description) async{
   }
 }
 
-Future<List<Map<String, dynamic>>> getTopics() async {
-  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('topics').get();
-
-  return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+Future<Topic> getTopic(String topicId) async {
+  var snapshot = await FirebaseFirestore.instance.collection('topics').doc(topicId).get();
+  return Topic.fromFirestore(snapshot);
 }
 
-Future<List<Map<String, dynamic>>> getQuestions(String topicId) async {
+Future<List<Topic>> getTopics() async {
+  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('topics').get();
+
+  return snapshot.docs.map((doc) => Topic.fromFirestore(doc)).toList();
+}
+
+Future<List<Question>> getTopicQuestions(String topicId) async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('questions')
       .where('topicId', isEqualTo: topicId)
       .get();
 
-  return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  return snapshot.docs.map((doc) => Question.fromFirestore(doc)).toList();
 }
 
 Future<void> updateTopic(String topicId, String? title, String? description) async {

@@ -87,3 +87,23 @@ Future<void> setWinner(String gameId, String playerId) async {
     print(e.message);
   }
 }
+
+Future<List<String>> getPlayerIdsFromDeathRun(String gameId) async {
+  try {
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection("death-runs")
+        .doc(gameId)
+        .get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      final playersMap = data?['players'] as Map<String, dynamic>;
+      return playersMap.keys.toList(); // List of player IDs
+    } else {
+      throw Exception("Game not found");
+    }
+  } on FirebaseException catch (e) {
+    print("Error fetching players: ${e.message}");
+    return [];
+  }
+}

@@ -1,12 +1,13 @@
-import "package:fluter_prjcts/Actions/Buttons/add_topic.button.dart";
-import "package:fluter_prjcts/Models/question.dart";
+import "package:fluter_prjcts/Firestore/Topic/topic.firestore.dart";
 import "package:fluter_prjcts/Models/topic.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/Buttons/save_topic.button.dart";
 import "package:fluter_prjcts/Router/router.dart";
+import "package:fluter_prjcts/Screens/loading_screen.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/Widgets/title_input.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/Widgets/description_title.dart";
-import "../Pages/TopicSetup/Buttons/edit_questions.button.dart";
+import "package:fluter_prjcts/Models/question.dart";
+import "package:fluter_prjcts/Pages/TopicSetup/Buttons/edit_questions.button.dart";
 
 
 class CreateTopicScreen extends StatefulWidget {
@@ -22,7 +23,6 @@ class CreateTopicState extends State<CreateTopicScreen> {
       id: '',
       title: '',
       description: '',
-      questions: []
   );
 
   final TextEditingController _titleController = TextEditingController();
@@ -40,8 +40,11 @@ class CreateTopicState extends State<CreateTopicScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Future<List<Question>> getQuestions() async{
+    return await getTopicQuestions(setupTopic.id);
+  }
+
+  Widget _buildContext(BuildContext context, List<Question> questions) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Container(
@@ -57,7 +60,7 @@ class CreateTopicState extends State<CreateTopicScreen> {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Questions ${setupTopic.questions.length}"),
+                  child: Text("Questions ${questions.length}"),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -69,7 +72,7 @@ class CreateTopicState extends State<CreateTopicScreen> {
                     onPressed: () {
                       router.goNamed(
                           "/question-list",
-                          extra: setupTopic.questions
+                          extra: questions //TODO check maybe can simplify with firebase
                       );
                     },
                   ),
@@ -127,6 +130,14 @@ class CreateTopicState extends State<CreateTopicScreen> {
       //     )
       //   ],
       // ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingScreen(
+        future: getQuestions,
+        builder: _buildContext
     );
   }
 }

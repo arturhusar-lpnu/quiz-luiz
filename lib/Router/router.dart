@@ -14,7 +14,14 @@ final GoRouter router = GoRouter(
     GoRoute(path: '/stats', builder: (context, state) => MainScreen(index: 2)),
     GoRoute(path: '/profile', builder: (context, state) => MainScreen(index: 3)),
     GoRoute(path: '/create-game', builder: (context, state) => GameSetupScreen()),
-    GoRoute(path: '/join-game', builder: (context, state) => JoinGameScreen()),
+    GoRoute(
+      name: "/join-game",
+      path: "/join-game",
+      builder: (context, state) {
+        final gameId = state.extra as String;
+        return JoinGameScreen(gameId: gameId);
+      },
+    ),
     GoRoute(
       name: "/question-list",
       path: "/question-list",

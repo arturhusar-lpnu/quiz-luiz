@@ -10,7 +10,7 @@ Future<User?> signUpUser(String username, String email, String password) async {
 
     User? user = userCredential.user;
     if (user != null) {
-      await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+      await FirebaseFirestore.instance.collection("players").doc(user.uid).set({
         "username": username,
         "email": email,
         "createdAt": FieldValue.serverTimestamp(),
@@ -36,10 +36,3 @@ Future<User?> signInUser(String email, String password) async {
   }
 }
 
-Future<String?> fetchUsername(String uid) async { //User? currentUser = FirebaseAuth.instance.currentUser; currentUser.uid
-  DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  if (userDoc.exists) {
-    return userDoc['username'];
-  }
-  return null;
-}

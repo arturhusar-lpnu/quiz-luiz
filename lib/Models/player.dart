@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class Player {
   String username;
   String id;
   String email;
-  User({required this.id, required this.username, required this.email});
+  Player({required this.id, required this.username, required this.email});
 
-  factory User.fromFirestore(DocumentSnapshot doc) {
+  factory Player.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return User(
+    return Player(
       id: doc.id,
       email: data['email'],
       username: data["username"],

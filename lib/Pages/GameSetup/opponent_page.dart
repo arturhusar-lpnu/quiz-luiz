@@ -1,4 +1,5 @@
-import 'package:fluter_prjcts/Models/user.dart';
+import 'package:fluter_prjcts/Firestore/Player/player.firestore.dart';
+import 'package:fluter_prjcts/Models/player.dart';
 import 'package:fluter_prjcts/Screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import '../../Widgets/Cards/user_card.dart';
@@ -28,20 +29,9 @@ class OpponentPageState extends State<OpponentPage> {
     selectedOpponentId = widget.selectedOpponentId ?? "";
   }
 
-  Future<List<User>> getAllUsers() async{ // TODO fetch from Firebase
-    await Future.delayed(Duration(seconds: 2));
-    return [
-      User(id: "user-id-1", username: "Halla Jordan"),
-      User(id: "user-id-2", username: "Yussuf Khan"),
-      User(id: "user-id-3", username: "Hall Jordan"),
-    ];
-  }
-
-  Future<User> getUser(String userId) async{
-      List<User> users = await getAllUsers();
-      return users.where((user) {
-         return user.id == userId;
-      }).first;
+  Future<Player> getOpponent(String opponentId) async{
+    Player? player = await getPlayer(opponentId);
+    return player;
   }
 
   void _updateSelection(String userId) async {
@@ -50,7 +40,7 @@ class OpponentPageState extends State<OpponentPage> {
       String opponentId = "";
 
       try {
-        User user = await getUser(userId);
+        Player user = await getOpponent(userId);
         opponentId = user.id;
       } catch (e) {
         opponentId = "";
@@ -78,8 +68,8 @@ class OpponentPageState extends State<OpponentPage> {
           const Text("Select your opponent", style: TextStyle(color: Colors.amber, fontSize: 24)),
           const SizedBox(height: 20),
           if (selectedOpponentId.isNotEmpty)
-            FutureBuilder<User>(
-              future: getUser(selectedOpponentId),
+            FutureBuilder<Player>(
+              future: getOpponent(selectedOpponentId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Text(
@@ -119,22 +109,22 @@ class OpponentPageState extends State<OpponentPage> {
 
           // Topics List
           Expanded(
-            child: LoadingScreen<List<User>>(
-                future: getAllUsers,
-                builder: (context, users) {
-                  List<User> filteredUsers = users.where((user) {
-                    return user.username.toLowerCase().contains(searchQuery.toLowerCase());
+            child: LoadingScreen<List<Player>>(
+                future: getAllPlayers,
+                builder: (context, players) {
+                  List<Player> filteredPlayers = players.where((player) {
+                    return player.username.toLowerCase().contains(searchQuery.toLowerCase());
                   }).toList();
 
                   return ListView.builder(
-                    itemCount: filteredUsers.length,
+                    itemCount: filteredPlayers.length,
                     itemBuilder: (context, index) {
-                      final user = filteredUsers[index];
+                      Player _player = filteredPlayers[index];
                       return Container(
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                        child: UserCard(
+                        child: PlayerCard(
                           headerWidth: 80,
-                          user: user,
+                          player: _player,
                           userId: widget.userId,
                           mainColor: Color(0xFF7173FF),
                           usernameStyle: const TextStyle(
@@ -142,7 +132,7 @@ class OpponentPageState extends State<OpponentPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                          onInviteTapped: () => _updateSelection(user.id),
+                          onInviteTapped: () => _updateSelection(_player.id),
                           selectedOpponentId: selectedOpponentId,
                         ),
                       );

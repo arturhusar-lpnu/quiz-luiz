@@ -17,11 +17,11 @@ class AnswerList extends StatefulWidget {
 }
 
 class AnswerListState extends State<AnswerList> {
-  List<Answer> answers = List.generate(4, (_) => Answer(content: "", isCorrect: false));
+  List<Answer> answers = List.generate(4, (_) => Answer(id: "", content: "", isCorrect: false, questionId: ''));
 
   void _handleAnswerChange(Answer updatedAnswer, int index) {
     setState(() {
-      answers[index] = updatedAnswer; // Update specific answer
+      answers[index] = updatedAnswer;
     });
   }
 

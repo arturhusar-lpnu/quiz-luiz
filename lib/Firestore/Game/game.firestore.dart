@@ -1,6 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluter_prjcts/Firestore/Game/DeathRun/death_run.firestore.dart';
+import 'package:fluter_prjcts/Firestore/Player/player.firestore.dart';
 import 'package:fluter_prjcts/Models/Enums/game_mode.enum.dart';
 import 'package:fluter_prjcts/Models/Enums/game_type.enum.dart';
+import 'package:fluter_prjcts/Models/game.dart';
+import 'package:fluter_prjcts/Models/player.dart';
+
+import '../../Models/topic.dart';
+import '../Topic/topic.firestore.dart';
 
 Future<String?> addGame(String title, GameType type, GameMode mode) async{
   try {
@@ -40,7 +47,25 @@ Future<void> addTopicToGame(String gameId, Set<String> topicsIds) async{
   }
 }
 
-Future<List<String>> getGameTopicIds(String gameId) async {
+Future<Game> getGame(String gameId) async{
+  final gameSnapshot = await FirebaseFirestore.instance.collection("games").doc(gameId).get();
+
+  return Game.fromFirestore(gameSnapshot);
+}
+
+Future<List<Player>> getGamePlayers(String gameId) async {
+  List<String> playerIds =  await getPlayerIdsFromDeathRun(gameId);
+  List<Player> players = [];
+  for(var playerId in playerIds) {
+    var player = await getPlayer(playerId);
+    players.add(player);
+  }
+
+  return players;
+}
+
+
+Future<List<Topic>> getGameTopics(String gameId) async {
   final gameTopicsSnapshot = await FirebaseFirestore.instance
       .collection('game-topics')
       .where('gameId', isEqualTo: gameId)
@@ -50,6 +75,13 @@ Future<List<String>> getGameTopicIds(String gameId) async {
       .map((doc) => doc['topicId'] as String)
       .toList();
 
-  return topicIds;
+  List<Topic> topics = [];
+
+  for(var topicId in topicIds) {
+    var topic = await getTopic(topicId);
+    topics.add(topic);
+  }
+
+  return topics;
 }
 

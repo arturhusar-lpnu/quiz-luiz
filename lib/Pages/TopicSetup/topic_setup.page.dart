@@ -13,7 +13,6 @@ class TopicSetupPageState extends State<TopicSetupPage> {
     id: '',
     description: '',
     title: '',
-    questions: []
   );
 
   @override
