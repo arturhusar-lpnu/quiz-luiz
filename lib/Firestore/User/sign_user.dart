@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Future<User?> registerUser(String username, String email, String password) async {
+Future<User?> signUpUser(String username, String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
@@ -34,4 +34,12 @@ Future<User?> signInUser(String email, String password) async {
     print("Error signing in: $e");
     return null;
   }
+}
+
+Future<String?> fetchUsername(String uid) async { //User? currentUser = FirebaseAuth.instance.currentUser; currentUser.uid
+  DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  if (userDoc.exists) {
+    return userDoc['username'];
+  }
+  return null;
 }

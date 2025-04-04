@@ -5,7 +5,6 @@ class MatchDetails {
   final String type;
   final String topics;
   final String mode;
-  //final MatchSelectionType selectionType;
 
   MatchDetails({
     required this.title,
