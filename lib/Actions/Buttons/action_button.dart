@@ -41,6 +41,7 @@ class ActionButton extends StatelessWidget {
             fontSize: fontSize,
             fontWeight: FontWeight.bold,
           ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

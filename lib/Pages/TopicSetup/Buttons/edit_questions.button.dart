@@ -8,5 +8,7 @@ class EditQuestionsButton extends ActionButton {
     required super.width,
     required super.height,
     required super.onPressed,
+    required super.fontSize,
+    required super.textColor,
   });
 }

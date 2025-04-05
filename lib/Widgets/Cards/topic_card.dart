@@ -1,20 +1,18 @@
-import 'package:fluter_prjcts/Screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
 import 'package:fluter_prjcts/Actions/RadioButtons/select_radio_button.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
-import 'package:fluter_prjcts/Models/question.dart';
 
-class TopicCard extends StatelessWidget {
-  final Topic topic;
-  final Color mainColor;
-  final bool isSelected;
-  final TextStyle titleStyle;
-  final TextStyle questionsStyle;
-  final VoidCallback onSelectionTapped;
-  double headerWidth;
+class TopicCard extends StatefulWidget {
+   final Topic topic;
+   final Color mainColor;
+   final bool isSelected;
+   final TextStyle titleStyle;
+   final TextStyle questionsStyle;
+   final VoidCallback onSelectionTapped;
+   final double headerWidth;
 
-  TopicCard({
+  const TopicCard({
     super.key,
     required this.topic,
     required this.mainColor,
@@ -25,64 +23,109 @@ class TopicCard extends StatelessWidget {
     this.headerWidth = 100,
   });
 
-  Future<List<Question>> getQuestions() async {
-    return await getTopicQuestions(topic.id);
-  }
-
-  Widget _buildContext(BuildContext context, List<Question> questions) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF3A3D4D),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          ///Header
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              width: headerWidth, // Fixed width to maintain consistency
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-              decoration: BoxDecoration(
-                color: mainColor,
-                borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
-              ),
-              child: Text(
-                topic.title,
-                style: titleStyle,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-
-
-          const SizedBox(width: 12), // Spacing between sections
-
-          /// Questions Count
-          Expanded(
-            child: Text(
-              "${questions.length} questions",
-              style: questionsStyle,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-
-          SelectRadioButton(
-            isSelected: isSelected,
-            onTap: onSelectionTapped,
-            color: mainColor,
-          ),
-          const SizedBox(width: 12)
-        ],
-      ),
-    );
-  }
-
   @override
-  Widget build(BuildContext context) {
-    return LoadingScreen(
-        future: getQuestions,
-        builder: _buildContext
-    );
-  }
+  State<TopicCard> createState() => _TopicCardState();
 }
+
+class _TopicCardState extends State<TopicCard> {
+    bool _isLoading = true;
+    int _questionsCount = 0;
+
+    @override
+    void initState() {
+      super.initState();
+      _loadQuestions();
+    }
+
+    Future<void> _loadQuestions() async {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final questions = await getTopicQuestions(widget.topic.id);
+
+        if (mounted) {
+          setState(() {
+            _questionsCount = questions.length;
+            _isLoading = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        print('Error loading questions: $e');
+      }
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return IntrinsicHeight(
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 80),
+          decoration: BoxDecoration(
+            color: const Color(0xFF3A3D4D),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              ///Header
+              Container(
+                width: widget.headerWidth,
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: widget.mainColor,
+                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
+                ),
+                child: Text(
+                  widget.topic.title,
+                  style: widget.titleStyle,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              /// Questions Count
+              Expanded(
+                child: _isLoading
+                    ? const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      "Loading...",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                )
+                    : Text(
+                  "$_questionsCount questions",
+                  style: widget.questionsStyle,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              SelectRadioButton(
+                isSelected: widget.isSelected,
+                onTap: widget.onSelectionTapped,
+                color: widget.mainColor,
+              ),
+              const SizedBox(width: 12)
+            ],
+          ),
+        ),
+      );
+    }
+  }

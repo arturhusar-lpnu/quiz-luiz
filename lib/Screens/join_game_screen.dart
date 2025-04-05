@@ -47,9 +47,7 @@ class JoinGameScreen extends StatelessWidget {
             child: Row(
               children: [
                 ReturnBackButton(
-                  backColor: Colors.amber,
-                  iconColor: Colors.black,
-                  radius: 20,
+                  iconColor: Colors.amber,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 50),
@@ -140,8 +138,10 @@ class JoinGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoadingScreen<Map<String, dynamic>>(
-        future: fetchData,
-        builder: _buildContext
+      loadingText: "Loading data...",
+      future: fetchData,
+      builder: _buildContext,
+      backgroundColor: Color(0xFF3A3D4D),
     );
   }
 }

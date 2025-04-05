@@ -11,10 +11,10 @@ class GameTypePage extends StatefulWidget {
   });
 
   @override
-  _GameTypePageState createState() => _GameTypePageState();
+  GameTypePageState createState() => GameTypePageState();
 }
 
-class _GameTypePageState extends State<GameTypePage> {
+class GameTypePageState extends State<GameTypePage> {
   int? selectedIndex;
 
   @override

@@ -1,22 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:fluter_prjcts/Models/answer.dart";
 
-Future<void> addQuestion(String topicId, String title, String description) async{
+Future<String> addQuestion(String topicId, String content) async{
   try {
-    await FirebaseFirestore.instance.collection("questions").add({
+    var docRef = await FirebaseFirestore.instance.collection("questions").add({
       'topicId' : topicId,
-      'title' : title,
-      'description': description,
+      'content' : content,
     });
-  } on FirebaseException catch(e) {
-    print(e.message);
+    return docRef.id;
+  } catch(e) {
+    throw Exception("Api fail: could not add question");
   }
 }
 
-Future<List<Map<String, dynamic>>> getAnswers(String questionId) async {
+Future<List<Answer>> getAnswers(String questionId) async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('answers')
       .where('questionId', isEqualTo: questionId)
       .get();
 
-  return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  return snapshot.docs.map((doc) => Answer.fromFirestore(doc)).toList();
 }

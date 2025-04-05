@@ -110,6 +110,8 @@ class OpponentPageState extends State<OpponentPage> {
           // Topics List
           Expanded(
             child: LoadingScreen<List<Player>>(
+              backgroundColor: Color(0xFF4D5061),
+              loadingText: "Eeny, meeny, miney moe...",
                 future: getAllPlayers,
                 builder: (context, players) {
                   List<Player> filteredPlayers = players.where((player) {
@@ -119,12 +121,12 @@ class OpponentPageState extends State<OpponentPage> {
                   return ListView.builder(
                     itemCount: filteredPlayers.length,
                     itemBuilder: (context, index) {
-                      Player _player = filteredPlayers[index];
+                      Player player = filteredPlayers[index];
                       return Container(
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         child: PlayerCard(
                           headerWidth: 80,
-                          player: _player,
+                          player: player,
                           userId: widget.userId,
                           mainColor: Color(0xFF7173FF),
                           usernameStyle: const TextStyle(
@@ -132,7 +134,7 @@ class OpponentPageState extends State<OpponentPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                          onInviteTapped: () => _updateSelection(_player.id),
+                          onInviteTapped: () => _updateSelection(player.id),
                           selectedOpponentId: selectedOpponentId,
                         ),
                       );

@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluter_prjcts/Models/question.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
 
-Future<void> addTopic(String title, String description) async{
+Future<String> addTopic(String title, String description) async{
   try {
-    await FirebaseFirestore.instance.collection("topics").add({
+    DocumentReference docRef = await FirebaseFirestore.instance.collection("topics").add({
       'title' : title,
       'description': description,
     });
-  } on FirebaseException catch(e) {
-    print(e.message);
+    return docRef.id;
+  } catch(e) {
+    throw Exception("Api fail: could not add new topic");
   }
 }
 
@@ -20,7 +21,6 @@ Future<Topic> getTopic(String topicId) async {
 
 Future<List<Topic>> getTopics() async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('topics').get();
-
   return snapshot.docs.map((doc) => Topic.fromFirestore(doc)).toList();
 }
 

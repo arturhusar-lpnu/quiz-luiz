@@ -4,7 +4,7 @@ class Answer {
   final String id;
   String content;
   bool isCorrect;
-  final String? questionId;
+  final String questionId;
 
   Answer({
     required this.id,

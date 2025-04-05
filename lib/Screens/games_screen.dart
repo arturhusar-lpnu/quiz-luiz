@@ -1,4 +1,4 @@
-import 'package:fluter_prjcts/Widgets/Other/match-history-short.dart';
+import 'package:fluter_prjcts/Widgets/Other/match_history_short.dart';
 import 'package:fluter_prjcts/Widgets/Other/practice_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Widgets/Other/screen_title.dart';

@@ -11,11 +11,13 @@ Future<String?> fetchUsername(String uid) async {
 }
 
 Future<List<Player>> getAllPlayers() async{
-  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('players')
-      .where("id", isNotEqualTo: FirebaseAuth.instance.currentUser?.uid)
-      .get();
+  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('players').get();
+  List<Player> players = snapshot.docs
+      .where((doc) => doc.id != FirebaseAuth.instance.currentUser?.uid)
+      .map((doc) => Player.fromFirestore(doc))
+      .toList();
 
-  return snapshot.docs.map((doc) => Player.fromFirestore(doc)).toList();
+  return players;
 }
 
 Future<Player?> getCurrentPlayer() async{

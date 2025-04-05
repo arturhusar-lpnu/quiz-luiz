@@ -15,10 +15,10 @@ class GameModePage extends StatefulWidget{
   });
 
   @override
-  _GameModeSelectorState createState() => _GameModeSelectorState();
+  GameModeSelectorState createState() => GameModeSelectorState();
 }
 
-class _GameModeSelectorState extends State<GameModePage> {
+class GameModeSelectorState extends State<GameModePage> {
   late PageController _pageController;
   int _currentPage = 0;
   int? selectedIndex;

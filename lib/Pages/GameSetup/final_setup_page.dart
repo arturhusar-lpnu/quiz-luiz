@@ -69,6 +69,8 @@ class FinalSetupState extends State<FinalSetupPage> {
   @override
   Widget build(BuildContext context) {
     return LoadingScreen<Map<String, dynamic>>(
+      backgroundColor: Color(0xFF30323D),
+      loadingText: "Almost there",
       future: fetchData, // Pass fetchData as the future
       builder: (context, data) {
         final Player opponent = data["opponent"] as Player;

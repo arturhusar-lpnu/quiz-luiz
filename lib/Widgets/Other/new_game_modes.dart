@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluter_prjcts/Actions/Buttons/new-game-mode-buttons.dart';
+import 'package:fluter_prjcts/Actions/Buttons/new_game_mode_buttons.dart';
 
 class NewGameModes extends StatelessWidget{
   const NewGameModes({super.key});

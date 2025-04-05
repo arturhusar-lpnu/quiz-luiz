@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:fluter_prjcts/Actions/Buttons/back_button.dart';
 import 'package:fluter_prjcts/Widgets/Other/screen_title.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +15,16 @@ class GameSetupScreen extends StatefulWidget {
   const GameSetupScreen({super.key});
 
   @override
-  _GameSetupScreenState createState() => _GameSetupScreenState();
+  GameSetupScreenState createState() => GameSetupScreenState();
 }
 
-class _GameSetupScreenState  extends State<GameSetupScreen>{
+class GameSetupScreenState  extends State<GameSetupScreen>{
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
   GameType? selectedGameType;
   GameMode? selectedGameMode;
-  Set<String> selectedTopicsIds = HashSet();
+  Set<String> selectedTopicsIds = {};
   String selectedOpponentId = "";
 
   @override
@@ -68,14 +66,13 @@ class _GameSetupScreenState  extends State<GameSetupScreen>{
                 Row(
                   children: [
                     ReturnBackButton(
-                        backColor: Colors.amber,
-                        iconColor: Colors.black,
-                        radius: 20),
+                        iconColor: Colors.amber,
+                    ),
                     SizedBox(width: 40),
                     ScreenTitle(title: "Game Setup")
                   ],
                 )
-            ),
+              ),
 
             SizedBox(height: 20),
 
@@ -136,7 +133,7 @@ class _GameSetupScreenState  extends State<GameSetupScreen>{
                   ),
                   GameTopicsPage(
                     selectedTopics: selectedTopicsIds,
-                    onTopicSelected: (topicId) {
+                    onSelectedTopic: (topicId) {
                       setState(() {
                         if (selectedTopicsIds.contains(topicId)) {
                           selectedTopicsIds.remove(topicId);
@@ -203,7 +200,7 @@ class _GameSetupScreenState  extends State<GameSetupScreen>{
                           canProceed = selectedTopicsIds.isNotEmpty;
                           break;
                         case 3:
-                          canProceed = selectedOpponentId != null;
+                          canProceed = selectedOpponentId.isNotEmpty;
                           break;
                         case 4:
                         // Final setup page - create and start the game
