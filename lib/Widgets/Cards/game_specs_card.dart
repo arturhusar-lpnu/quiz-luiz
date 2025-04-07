@@ -28,8 +28,21 @@ class GameSpecsCard extends StatelessWidget {
     this.bodyBackColor = const Color(0xFF30323D),
   });
 
+
+  String _correctName(String name) {
+    name = name.replaceAll("_", " ").trim();
+    List<String> parts = name
+        .toLowerCase()
+        .split(" ")
+        .map((p) => p[0].toUpperCase() + p.substring(1))
+        .toList();
+    return parts.join(" ");
+  }
+
   @override
   Widget build(BuildContext context) {
+    final String type = _correctName(game.type.name);
+    final String mode = _correctName(game.mode.name);
     return Container(
       width: width,
       height: height,
@@ -82,12 +95,12 @@ class GameSpecsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Type: ${game.type.name.toLowerCase()[0].toUpperCase()}",
+                      "Type: $type",
                       style: const TextStyle(color: Colors.white, fontSize: 24),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Mode: ${game.mode.name.toLowerCase()[0].toUpperCase()}",
+                      "Mode: $mode",
                       style: TextStyle(
                         color: Color(0xFF929292),
                         fontSize: 20,

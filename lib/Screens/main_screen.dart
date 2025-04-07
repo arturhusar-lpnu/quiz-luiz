@@ -1,6 +1,6 @@
+import 'package:fluter_prjcts/Router/router.dart';
+import 'package:fluter_prjcts/Screens/topics.screen.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
 import 'home_screen.dart';
 import 'games_screen.dart';
 import 'profile_screen.dart';
@@ -9,6 +9,7 @@ import 'stats_screen.dart';
 enum ScreensEnum {
   homeScreen,
   gamesScreen,
+  topicScreen,
   statsScreen,
   profileScreen,
 }
@@ -28,6 +29,7 @@ class MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     GamesScreen(),
+    TopicsScreen(),
     StatsScreen(),
     ProfileScreen(),
   ];
@@ -44,16 +46,19 @@ class MainScreenState extends State<MainScreen> {
       });
       switch(ScreensEnum.values[index]) {
         case ScreensEnum.homeScreen:
-          context.go('/');
+          router.go('/');
           break;
         case ScreensEnum.gamesScreen :
-          context.go('/games');
+          router.go('/games');
+          break;
+        case ScreensEnum.topicScreen:
+          router.go('/topics');
           break;
         case ScreensEnum.statsScreen :
-          context.go('/stats');
+          router.go('/stats');
           break;
         case ScreensEnum.profileScreen :
-          context.go('/profile');
+          router.go('/profile');
           break;
       }
   }
@@ -71,6 +76,7 @@ class MainScreenState extends State<MainScreen> {
         items: [
           BottomNavigationBarItem(icon : Icon(Icons.home, size: 32), label: 'Home'),
           BottomNavigationBarItem(icon : Icon(Icons.videogame_asset, size: 32), label: 'Games'),
+          BottomNavigationBarItem(icon : Icon(Icons.library_add_rounded, size: 32), label: 'Topics'),
           BottomNavigationBarItem(icon : Icon(Icons.bar_chart, size: 32), label: 'Stats'),
           BottomNavigationBarItem(icon : Icon(Icons.person, size: 32), label: 'Profile'),
         ],

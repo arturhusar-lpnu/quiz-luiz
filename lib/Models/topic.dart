@@ -26,4 +26,8 @@ class Topic {
       'description': description,
     };
   }
+  @override
+  String toString() {
+    return title;
+  }
 }

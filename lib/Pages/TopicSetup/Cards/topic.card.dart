@@ -4,13 +4,14 @@ import 'package:fluter_prjcts/Actions/RadioButtons/select_radio_button.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 
 class TopicCard extends StatefulWidget {
-   final Topic topic;
-   final Color mainColor;
-   final bool isSelected;
-   final TextStyle titleStyle;
-   final TextStyle questionsStyle;
-   final VoidCallback onSelectionTapped;
-   final double headerWidth;
+  final Topic topic;
+  final Color mainColor;
+  final bool isSelected;
+  final TextStyle titleStyle;
+  final TextStyle questionsStyle;
+  final VoidCallback onSelectionTapped;
+  final VoidCallback onCardTapped;
+  final double headerWidth;
 
   const TopicCard({
     super.key,
@@ -20,6 +21,7 @@ class TopicCard extends StatefulWidget {
     required this.isSelected,
     required this.titleStyle,
     required this.questionsStyle,
+    required this.onCardTapped,
     this.headerWidth = 100,
   });
 
@@ -61,8 +63,7 @@ class _TopicCardState extends State<TopicCard> {
       }
     }
 
-    @override
-    Widget build(BuildContext context) {
+    Widget _buildContent(BuildContext context) {
       return IntrinsicHeight(
         child: Container(
           constraints: const BoxConstraints(minHeight: 80),
@@ -126,6 +127,14 @@ class _TopicCardState extends State<TopicCard> {
             ],
           ),
         ),
+      );
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return GestureDetector(
+        onTap: widget.onCardTapped,
+        child: _buildContent(context),
       );
     }
   }

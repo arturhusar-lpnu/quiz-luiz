@@ -16,7 +16,7 @@ class TopicTitleWidget extends StatelessWidget {
             hintText: "Insert topic title",
           ),
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontSize: 22,
           ),
         );

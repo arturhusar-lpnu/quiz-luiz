@@ -1,1 +1,1 @@
-enum GameMode {deathRun, firstTo15, inARow}
+enum GameMode {death_run, first_to_15, in_a_row}

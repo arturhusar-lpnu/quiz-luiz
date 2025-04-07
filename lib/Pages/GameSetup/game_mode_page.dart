@@ -11,7 +11,7 @@ class GameModePage extends StatefulWidget{
     super.key,
     required this.onModeSelected,
     this.selectedMode,
-    this.modes = const [GameMode.deathRun, GameMode.firstTo15, GameMode.inARow]
+    this.modes = const [GameMode.death_run, GameMode.first_to_15, GameMode.in_a_row]
   });
 
   @override
@@ -180,22 +180,22 @@ class GameModeSelectorState extends State<GameModePage> {
 
   String _getTitle(GameMode mode) {
     switch (mode) {
-      case GameMode.deathRun:
+      case GameMode.death_run:
         return 'Death Run';
-      case GameMode.firstTo15:
+      case GameMode.first_to_15:
         return 'First to 15';
-      case GameMode.inARow:
+      case GameMode.in_a_row:
         return '5 In A Row';
     }
   }
 
   String _getDescription(GameMode mode) {
     switch (mode) {
-      case GameMode.deathRun:
+      case GameMode.death_run:
         return 'First to 3 mistakes loses';
-      case GameMode.firstTo15:
+      case GameMode.first_to_15:
         return 'First to secure 15 points wins';
-      case GameMode.inARow:
+      case GameMode.in_a_row:
         return 'First to get 5 consecutive correct answers wins';
       }
   }
@@ -203,11 +203,11 @@ class GameModeSelectorState extends State<GameModePage> {
   // Helper function to get mode header color
   Color _getHeaderColor(GameMode mode) {
     switch (mode) {
-      case GameMode.deathRun:
+      case GameMode.death_run:
         return const Color(0xFF5DD39E);
-      case GameMode.firstTo15:
+      case GameMode.first_to_15:
         return const Color(0xFF7173FF);
-      case GameMode.inARow:
+      case GameMode.in_a_row:
         return Colors.amber;
       }
   }

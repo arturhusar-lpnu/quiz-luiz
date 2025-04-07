@@ -17,18 +17,20 @@ class SelectSquareButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
-          color: Colors.transparent,
+          color: isSelected ? Colors.blueAccent : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: borderColor,
             width: 2,
+            style: BorderStyle.solid
           ),
         ),
         child: isSelected
-            ? Icon(Icons.check, color: Colors.white, size: 24)
+            ? Icon(Icons.check, color: Colors.black, size: 26)
             : null,
       ),
     );

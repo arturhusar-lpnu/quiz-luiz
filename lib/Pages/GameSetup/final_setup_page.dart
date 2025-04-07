@@ -56,7 +56,7 @@ class FinalSetupState extends State<FinalSetupPage> {
   }
 
   Future<Player> fetchCurrPlayer() async{
-    var currPl =  await getCurrentPlayer();
+    var currPl = await getCurrentPlayer();
 
     if(currPl == null) {
       throw Exception("No Current Player Found");
@@ -108,7 +108,7 @@ class FinalSetupState extends State<FinalSetupPage> {
                   height: 300,
                   headerBackColor: Color(0xFF5DD39E),
                   titleColor: Color(0xFF30323D),
-                  titleText: "Duel with ${opponent.id} ${opponent.username}",
+                  titleText: "Duel with ${opponent.username}",
                 ),
               ),
 

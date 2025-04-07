@@ -16,7 +16,7 @@ class TopicDescriptionWidget extends StatelessWidget {
             hintText: "Insert topic Description",
           ),
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontSize: 22,
           ),
         );
