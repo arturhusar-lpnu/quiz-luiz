@@ -10,7 +10,7 @@ class InviteButton extends StatefulWidget {
   final VoidCallback onInviteTapped;
   final bool isSelected;
   void invite() {
-    print("$opponentId is invited to game with $userId(You)");
+
   }
 
   const InviteButton({
