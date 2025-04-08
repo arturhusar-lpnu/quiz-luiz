@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Future<User?> signUpUser(String username, String email, String password) async {
+Future<User> signUpUser(String username, String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
@@ -16,10 +16,9 @@ Future<User?> signUpUser(String username, String email, String password) async {
         "createdAt": FieldValue.serverTimestamp(),
       });
     }
-    return user;
+    return user!;
   } catch (e) {
-    print("Error registering user: $e");
-    return null;
+    throw ("Error registering user: $e");
   }
 }
 

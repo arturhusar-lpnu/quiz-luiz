@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Actions/Buttons/create_game_button.dart';
 import 'package:fluter_prjcts/Models/game.dart';
@@ -65,13 +66,23 @@ class FinalSetupState extends State<FinalSetupPage> {
     return currPl;
   }
 
+  Future<void> _addGame() async {
+    Game game = Game(id: "", mode: widget.selectedGameMode!, type: widget.selectedGameType!);
+    GameController controller = GameController(gameSetup: game);
+
+    controller.setTopicIds(widget.selectedTopicsIds);
+    controller.setPlayers(widget.currentUserId, widget.selectedOpponentId);
+
+    await controller.addTopics();
+    await controller.addPlayers();
+  }
 
   @override
   Widget build(BuildContext context) {
     return LoadingScreen<Map<String, dynamic>>(
       backgroundColor: Color(0xFF30323D),
       loadingText: "Almost there",
-      future: fetchData, // Pass fetchData as the future
+      future: fetchData,
       builder: (context, data) {
         final Player opponent = data["opponent"] as Player;
         final Player currentPlayer = data["current_player"] as Player;
@@ -95,7 +106,6 @@ class FinalSetupState extends State<FinalSetupPage> {
                 child: GameSpecsCard(
                   game: Game(
                     id: "",
-                    title: '',
                     mode: widget.selectedGameMode!,
                     type: widget.selectedGameType!,
                   ),
@@ -120,6 +130,7 @@ class FinalSetupState extends State<FinalSetupPage> {
                     color: Color(0xFF6E3DDA),
                     width: 220,
                     height: 70,
+                    onPressed: _addGame,
                   ),
                 ),
               ),

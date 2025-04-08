@@ -12,22 +12,13 @@ import 'package:fluter_prjcts/Models/topic.dart';
 
 class JoinGameScreen extends StatelessWidget {
   final String gameId;
+
   const JoinGameScreen({super.key, required this.gameId});
 
-  Future<Game> _getGame() async{
-    return await getGame(gameId);
-  }
-  Future<List<Topic>> getTopics() async {
-    return await getGameTopics(gameId);
-  }
-  Future<List<Player>> getPlayers() async {
-    return await getGamePlayers(gameId);
-  }
-
   Future<Map<String, dynamic>> fetchData() async {
-    final game = await _getGame();
-    final topics = await getTopics();
-    final players = await getPlayers();
+    final game = await getGame(gameId);
+    final topics = await getGameTopics(gameId);
+    final players = await getGamePlayers(gameId, game.mode);
 
     return {"game": game, "topics": topics, "players" : players};
   }

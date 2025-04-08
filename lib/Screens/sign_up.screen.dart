@@ -1,33 +1,66 @@
-import "package:fluter_prjcts/Router/router.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Firestore/Player/sign_user.dart";
 
+import "package:fluter_prjcts/Firestore/Player/player.firestore.dart";
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+import "../Actions/Buttons/back_button.dart";
+import "../Router/router.dart";
+import "../Widgets/Other/screen_title.dart";
+import "loading_screen.dart";
+
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  SignInState createState() => SignInState();
+  SignUpState createState() => SignUpState();
 }
 
-class SignInState extends State<SignInScreen> {
+class SignUpState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _signIn() async {
+  void onPress() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => LoadingScreen<void>(
+          backgroundColor: Colors.amber,
+          loadingText: "Creating your account...",
+          future: _signUp,
+          builder: (context, _) {
+            // After sign up and login, go to home
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              router.go('/');
+            });
+
+            // Show empty container briefly to allow frame callback
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _signUp() async {
     try {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
+      final username = _usernameController.text.trim();
+
+      await checkUsername(username);
+      await signUpUser(username, email, password);
+
       await signInUser(email, password);
-      print("logged in");
     } catch(e) {
-      throw Exception("Auth error. Check email or password. Sign Up for a new account");
+      throw Exception("Auth error. $e");
     }
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -45,16 +78,25 @@ class SignInState extends State<SignInScreen> {
               Expanded(
                 child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 15),
-                      const Text(
-                        "Welcome back wanderer!\n Please sign in",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.amber,
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: ReturnBackButton(iconColor: Colors.amber),
+                          ),
+                          Center(child: ScreenTitle(title: "Sign Up")),
+                        ],
+                      ),
+                      const SizedBox(height: 50),
+                      TextField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Username",
                         ),
                       ),
                       const SizedBox(height: 15),
@@ -78,7 +120,7 @@ class SignInState extends State<SignInScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _signIn,
+                          onPressed: onPress,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amber,
                             foregroundColor: Colors.black,
@@ -88,31 +130,12 @@ class SignInState extends State<SignInScreen> {
                             ),
                           ),
                           child: const Text(
-                            "Sign In",
+                            "Sign Up",
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
                       SizedBox(height: 20,),
-                      Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text("Not a member? ", style: TextStyle(fontSize: 18),),
-                            TextButton(
-                              onPressed: () {
-                                router.go('/sign-up');
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.amber,
-                                textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              child: const Text("Sign Up", style: TextStyle(fontSize: 18)),
-                            ),
-                          ],
-                        ),
-                      ),
-                      //const SizedBox(height: 100),
                     ],
                   ),
                 ),

@@ -5,9 +5,9 @@ import 'package:fluter_prjcts/Screens/create_topic.screen.dart';
 import 'package:fluter_prjcts/Screens/game_setup_screen.dart';
 import 'package:fluter_prjcts/Screens/join_game_screen.dart';
 import 'package:go_router/go_router.dart';
-import '../Pages/TopicSetup/question_list.page.dart';
-import '../Screens/sign_in.screen.dart';
-
+import 'package:fluter_prjcts/Pages/TopicSetup/question_list.page.dart';
+import 'package:fluter_prjcts/Screens/sign_in.screen.dart';
+import 'package:fluter_prjcts/Screens/sign_up.screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/sign-in',
@@ -27,6 +27,7 @@ final GoRouter router = GoRouter(
   },
   routes: [
     GoRoute(path: '/sign-in', builder: (context, state) => const SignInScreen()),
+    GoRoute(path: '/sign-up', builder: (context, state) => const SignUpScreen()),
     GoRoute(path: '/', builder: (context, state) => MainScreen(index: ScreensEnum.homeScreen.index)),
     GoRoute(path: '/games', builder: (context, state) => MainScreen(index: ScreensEnum.gamesScreen.index)),
     GoRoute(path: '/topics', builder: (context, state) => MainScreen(index: ScreensEnum.topicScreen.index)),
@@ -58,13 +59,5 @@ final GoRouter router = GoRouter(
         return AddQuestionPage(topicId: topicId);
       },
     ),
-    // GoRoute(
-    //   name: "/add-answers",
-    //   path: "/add-answers",
-    //   builder: (context, state) {
-    //     final questionId = state.extra as String;
-    //     return AddAnswersPage(questionId: questionId);
-    //   }
-    // )
   ],
 );

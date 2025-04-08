@@ -31,3 +31,14 @@ Future<Player> getPlayer(String playerId) async {
     }
     return Player.fromFirestore(docSnapshot);
 }
+
+Future<void> checkUsername(String username) async{
+  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('players').get();
+  bool taken = snapshot.docs
+      //.where((doc) => doc.id != FirebaseAuth.instance.currentUser?.uid)
+      .map((doc) => Player.fromFirestore(doc))
+      .any((p) => p.username == username);
+  if(taken) {
+    throw Exception("username $username is taken.\nTry another one");
+  }
+}

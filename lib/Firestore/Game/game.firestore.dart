@@ -5,25 +5,188 @@ import 'package:fluter_prjcts/Models/Enums/game_mode.enum.dart';
 import 'package:fluter_prjcts/Models/Enums/game_type.enum.dart';
 import 'package:fluter_prjcts/Models/game.dart';
 import 'package:fluter_prjcts/Models/player.dart';
+import 'package:fluter_prjcts/Models/topic.dart';
+import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 
-import '../../Models/topic.dart';
-import '../Topic/topic.firestore.dart';
+class GameController {
+  late Game gameSetup;
+  late String gameCollection;
+  late Set<String> topicIds;
+  late List<String> playerIds;
 
-Future<String?> addGame(String title, GameType type, GameMode mode) async{
-  try {
-    var game = await FirebaseFirestore.instance.collection("games").add({
-      'title' : title,
-      'type' : type.name.toLowerCase(),
-      'mode': mode.name.toUpperCase(),
-    });
-    return game.id;
-  } on FirebaseException catch(e) {
-    print(e.message);
-    return null;
+  GameController({
+    required this.gameSetup,
+  }) {
+    _getCollection(gameSetup.mode);
+  }
+
+
+  void setTopicIds(Set<String> topics) {
+    topicIds = topics;
+  }
+
+  void setPlayers(String player1Id, String player2Id) {
+    playerIds = [player1Id, player2Id];
+  }
+
+  Game game(){
+    return gameSetup;
+  }
+
+  void _getCollection(GameMode mode) {
+    switch(mode) {
+      case GameMode.death_run:
+        gameCollection = "death-runs";
+        break;
+      case GameMode.first_to_15:
+        gameCollection = "first-to";
+        break;
+      case GameMode.in_a_row:
+        gameCollection = "in-a-row";
+        break;
+    }
+  }
+
+  Future<void> addTopics() async{
+    if(gameSetup.id.isEmpty) {
+      await addGame(gameSetup.type, gameSetup.mode);
+    }
+
+    await addTopicsToGame(gameSetup.id, topicIds);
+  }
+
+  Future<void> addPlayers() async {
+    try {
+      if(gameSetup.id.isEmpty) {
+        gameSetup.id = await addGame(gameSetup.type, gameSetup.mode);
+      }
+
+      if(playerIds.isEmpty) {
+        throw Exception("Add players");
+      }
+
+      await FirebaseFirestore.instance.collection(gameCollection).doc(gameSetup.id).set({
+        "players" : {
+          playerIds.first: {
+            "fails": 0,
+            "score": 0,
+          },
+          playerIds.last: {
+            "fails": 0,
+            "score": 0,
+          }
+        },
+        "status" : "inProgress",
+        "currentQuestion" : "",
+        "winner" : null,
+      });
+    } catch (e) {
+      throw Exception("API Error: could not add $gameCollection game");
+    }
+  }
+
+  Future<List<Player>> getGamePlayers() async {
+    List<String> playerIds =  await getPlayerIds(gameSetup.id, gameCollection);
+    List<Player> players = [];
+    for(var playerId in playerIds) {
+      var player = await getPlayer(playerId);
+      players.add(player);
+    }
+
+    return players;
+  }
+
+  Future<List<Topic>> getTopics() async {
+    return await getGameTopics(gameSetup.id);
+  }
+
+  Future<void> setWinner(String playerId) async {
+    try {
+      await FirebaseFirestore.instance.collection(gameCollection).doc(gameSetup.id).update({
+        "winner": playerId,
+      });
+    } catch (e) {
+      throw Exception("API error setting the winner");
+    }
+  }
+
+  Future<void> updateStatus(GameStatus status) async {
+    try{
+      await FirebaseFirestore.instance.collection(gameCollection).doc(gameSetup.id).update({
+        "status" : status.name,
+      });
+    } catch (e) {
+      throw Exception("Error updating status");
+    }
+  }
+
+  Future<void> updateCurrentQuestion(String questionId) async {
+    try{
+      await FirebaseFirestore.instance.collection(gameCollection).doc(gameSetup.id).update({
+        "currentQuestion" : questionId,
+      });
+    } catch (e) {
+      throw Exception("API Error updating current question");
+    }
   }
 }
 
-Future<void> addTopicToGame(String gameId, Set<String> topicsIds) async{
+Future<String> addGame(GameType type, GameMode mode) async{
+  try {
+    var game = await FirebaseFirestore.instance.collection("games").add({
+      'type' : type.name.toLowerCase(),
+      'mode': mode.name.toLowerCase(),
+    });
+    return game.id;
+  } catch(e) {
+    throw(Exception("API error: could not add a game"));
+  }
+}
+
+Future<List<Player>> getGamePlayers(gameId, GameMode mode) async {
+  String gameCollection = "";
+  switch(mode) {
+    case GameMode.death_run:
+      gameCollection = "death-runs";
+      break;
+    case GameMode.first_to_15:
+      gameCollection = "first-to";
+      break;
+    case GameMode.in_a_row:
+      gameCollection = "in-a-row";
+      break;
+  }
+
+  List<String> playerIds =  await getPlayerIds(gameId, gameCollection);
+  List<Player> players = [];
+  for(var playerId in playerIds) {
+    var player = await getPlayer(playerId);
+    players.add(player);
+  }
+
+  return players;
+}
+
+Future<List<String>> getPlayerIds(String gameId, String collection) async {
+  try {
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection(collection)
+        .doc(gameId)
+        .get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      final playersMap = data?['players'] as Map<String, dynamic>;
+      return playersMap.keys.toList();
+    } else {
+      throw Exception("Game not found");
+    }
+  } catch (e) {
+    throw Exception("API Error fetching players");
+  }
+}
+
+Future<void> addTopicsToGame(String gameId, Set<String> topicsIds) async{
   try {
     var db = FirebaseFirestore.instance;
 
@@ -42,8 +205,8 @@ Future<void> addTopicToGame(String gameId, Set<String> topicsIds) async{
       });
     }
 
-  } on FirebaseException catch(e) {
-    print(e.message);
+  } catch(e) {
+    throw(Exception("API error: could not add topics to a game"));
   }
 }
 
@@ -52,18 +215,6 @@ Future<Game> getGame(String gameId) async{
 
   return Game.fromFirestore(gameSnapshot);
 }
-
-Future<List<Player>> getGamePlayers(String gameId) async {
-  List<String> playerIds =  await getPlayerIdsFromDeathRun(gameId);
-  List<Player> players = [];
-  for(var playerId in playerIds) {
-    var player = await getPlayer(playerId);
-    players.add(player);
-  }
-
-  return players;
-}
-
 
 Future<List<Topic>> getGameTopics(String gameId) async {
   final gameTopicsSnapshot = await FirebaseFirestore.instance
