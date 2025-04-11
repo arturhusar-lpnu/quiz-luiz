@@ -82,7 +82,7 @@ class FinalSetupState extends State<FinalSetupPage> {
     await controller.addPlayers();
     gameData.game.id = await controller.getGameId();
     await sendNotification(gameData.invitedPlayer.id, gameData);
-    router.push("/waiting-room", extra: {gameData});
+    router.push("/waiting-room", extra: gameData);
   }
 
   @override

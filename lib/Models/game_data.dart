@@ -17,10 +17,10 @@ class GameData {
 
   Map<String, dynamic> toJson() {
     return {
-      'game': game.toMap(),  // Assuming `toJson()` exists in `Game`
-      'topics': topics.map((topic) => topic.toMap()).toList(),  // Convert list of Topic to JSON
-      'hostPlayer': hostPlayer.toMap(),  // Assuming `toJson()` exists in `Player`
-      'invitedPlayer': invitedPlayer.toMap(),  // Assuming `toJson()` exists in `Player`
+      'game': game.toMap(),
+      'topics': topics.map((topic) => topic.toMap()).toList(),
+      'hostPlayer': hostPlayer.toMap(),
+      'invitedPlayer': invitedPlayer.toMap(),
     };
   }
 

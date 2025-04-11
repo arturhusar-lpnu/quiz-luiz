@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Actions/Buttons/back_button.dart';
 import "package:fluter_prjcts/Widgets/Other/screen_title.dart";
 import "package:fluter_prjcts/Widgets/Cards/game_data_card.dart";
+import '../Firestore/FCM/notification.firestore.dart';
 import '../Models/game_data.dart';
 
 class WaitingRoomScreen extends StatelessWidget {
@@ -59,7 +60,7 @@ class WaitingRoomScreen extends StatelessWidget {
                         titleColor: Color(0xFF30323D),
                         titleText: "${gameData.invitedPlayer.username}\n"
                             "is invited \n"
-                            "Game Id: ${gameData.game.id}",
+                            "Game Id: ${gameData.game.id.substring(0, 4)}",
                         width: 350,
                         height: 300,
                       ),
@@ -69,27 +70,17 @@ class WaitingRoomScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // Row for Decline and Accept Buttons
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: InviteButton(
-                      color: Color(0xFFD66C6C),
-                      width: 160,
-                      height: 60,
-                      fontSize: 24,
-                      userId: gameData.hostPlayer.id,
-                      opponentId: gameData.invitedPlayer.id,
-                      onInviteTapped: () {  },
-                      isSelected: false,
-                  ),
-                ),
-              ],
+          Center(child: InviteButton(
+              color: Color(0xFF5DD39E),
+              width: 160,
+              height: 60,
+              fontSize: 24,
+              userId: gameData.hostPlayer.id,
+              opponentId: gameData.invitedPlayer.id,
+              onInviteTapped: () async{
+                await sendNotification(gameData.invitedPlayer.id, gameData);
+              },
+              isSelected: false,
             ),
           ),
         ],
