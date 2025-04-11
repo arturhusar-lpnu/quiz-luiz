@@ -6,6 +6,8 @@ import './Router/router.dart';
 import "package:fluter_prjcts/Widgets/PopUp/error.popup.dart";
 import "package:fluter_prjcts/Firestore/FCM/receiver.firestore.dart";
 
+import 'Firestore/FCM/notification.service.dart';
+
 void main() async{
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +28,8 @@ void main() async{
       _showGlobalError(details.exceptionAsString());
     };
 
-    receiveNotificationsInit();
+    //receiveNotificationsInit();
+    await NotificationService.instance.initialize();
 
     runApp(MyApp());
   }, (error, _) {

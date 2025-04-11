@@ -18,8 +18,8 @@ Future<void> initFCMToken() async {
 
 
 Future<void> sendNotification(String playerId, GameData gameData) async {
-  // const String apiUrl = "https://quiz-luiz-api-1.onrender.com/sendNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
-  const String apiUrl = "http://192.168.137.109:3000/sendNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
+  const String apiUrl = "https://quiz-luiz-api-1.onrender.com/sendNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
+  //const String apiUrl = "http://192.168.137.109:3000/sendNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
 
   final response = await http.post(
     Uri.parse(apiUrl),
