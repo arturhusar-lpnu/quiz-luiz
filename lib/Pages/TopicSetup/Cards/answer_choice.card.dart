@@ -45,15 +45,12 @@ class AnswerChoiceState extends State<AnswerChoiceCard> {
   void updateContent() async {
     final newText = _textController.text.trim();
 
-    print(newText);
-
     if(newText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Answer Content is required!")),
       );
       return;
     }
-
 
     if (newText != widget.answer.content) {
       setState(() {

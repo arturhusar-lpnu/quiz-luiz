@@ -59,7 +59,7 @@ class _TopicCardState extends State<TopicCard> {
             _isLoading = false;
           });
         }
-        print('Error loading questions: $e');
+        throw Exception('Error loading questions: $e');
       }
     }
 

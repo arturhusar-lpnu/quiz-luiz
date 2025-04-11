@@ -10,32 +10,79 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
-      children: [
-        // 🔹 Title
-        const SizedBox(height: 15),
-        ScreenTitle(title: "QuizLuiz"),
-        const SizedBox(height: 15),
+    final screenSize = MediaQuery.of(context).size;
 
-        // 🔥 Days Streak Box
-        StreakWidget(),
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+              vertical: screenSize.height * 0.04,
+              horizontal: screenSize.width * 0.04
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              const SizedBox(height: 15),
+              const ScreenTitle(title: "QuizLuiz"),
+              const SizedBox(height: 15),
 
-        const SizedBox(height: 10),
+              // 🔥 Days Streak Box
+              const StreakWidget(),
 
-        //Recent Topics
-        RecentTopicsWidget(),
+              const SizedBox(height: 20),
 
-        //LeaderBoard
-        const SizedBox(height: 20),
-        LeaderboardWidget(),
+              //Recent Topics
+              const RecentTopicsWidget(),
 
-        //Play Button
-        const SizedBox(height: 20),
-        Center(child: PlayButton(text: "Play", color: Color(0xFF6E3DDA), width: 220, height: 70),
+              //LeaderBoard
+              const SizedBox(height: 20),
+              const LeaderboardWidget(),
+
+              //Play Button
+              const SizedBox(height: 30),
+              Center(
+                child: PlayButton(
+                    text: "Play",
+                    color: const Color(0xFF6E3DDA),
+                    width: screenSize.width * 0.6,
+                    height: 70
+                ),
+              ),
+              // Add some bottom padding for better spacing
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
-      ],
+      ),
     );
+
+    // return ListView(
+    //   // padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
+    //   children: [
+    //     // 🔹 Title
+    //     const SizedBox(height: 15),
+    //     ScreenTitle(title: "QuizLuiz"),
+    //     const SizedBox(height: 15),
+    //
+    //     // 🔥 Days Streak Box
+    //     StreakWidget(),
+    //
+    //     const SizedBox(height: 10),
+    //
+    //     //Recent Topics
+    //     RecentTopicsWidget(),
+    //
+    //     //LeaderBoard
+    //     const SizedBox(height: 20),
+    //     LeaderboardWidget(),
+    //
+    //     //Play Button
+    //     const SizedBox(height: 20),
+    //     Center(child: PlayButton(text: "Play", color: Color(0xFF6E3DDA), width: 220, height: 70),
+    //     ),
+    //   ],
+    // );
   }
 }
 

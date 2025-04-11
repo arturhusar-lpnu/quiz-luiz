@@ -1,9 +1,9 @@
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
+import 'package:fluter_prjcts/Pages/TopicSetup/List/simple_topic.list.dart';
 import 'package:fluter_prjcts/Screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import '../Actions/Buttons/back_button.dart';
-import '../Pages/GameSetup/game_topics_page.dart';
 import '../Pages/TopicSetup/Buttons/save_topic.button.dart';
 import '../Router/router.dart';
 import '../Widgets/Other/screen_title.dart';
@@ -50,10 +50,8 @@ class TopicsState extends State<TopicsScreen> {
         topic.title.toLowerCase().contains(searchQuery.toLowerCase())
     ).toList();
 
-    return TopicsList(
+    return SimpleTopicsList(
       topics: filteredTopics,
-      selectedTopics: {},
-      onTopicSelected: (_) {  },
     );
   }
 

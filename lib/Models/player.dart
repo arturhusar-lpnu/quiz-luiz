@@ -15,10 +15,19 @@ class Player {
     );
   }
 
+  factory Player.fromMap(Map<String, dynamic> data) {
+    return Player(
+      id: data["id"],
+      email: data['email'],
+      username: data["username"],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       "username" : username,
       'email': email,
+      "id" : id,
     };
   }
 }

@@ -3,11 +3,12 @@ import "package:fluter_prjcts/Firestore/Question/question.firestore.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/Buttons/save_topic.button.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/List/answers.list.dart";
 import "package:fluter_prjcts/Widgets/Other/screen_title.dart";
+import "package:fluter_prjcts/Widgets/PopUp/saved.popup.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Models/question.dart";
 import "package:fluter_prjcts/Actions/Buttons/back_button.dart";
 import "package:fluter_prjcts/Models/answer.dart";
-import "package:fluter_prjcts/Router/router.dart";
+import "../../Widgets/PopUp/alert.popup.dart";
 import "Widgets/Question/question_content_input.dart";
 
 
@@ -37,15 +38,12 @@ class AddQuestionState extends State<AddQuestionPage> {
   void _updateAnswer(int index, Answer updatedAnswer) {
     setState(() {
       answers[index] = updatedAnswer;
-      print("Called update answer");
     });
   }
 
   bool _validateAnswers() {
     final nonEmpty = answers.where((a) => a.content.isNotEmpty).length == 4;
-    answers.forEach((a) => print(a));
     final hasCorrect = answers.any((a) => a.isCorrect);
-    print("$nonEmpty : $hasCorrect");
     return nonEmpty && hasCorrect;
   }
 
@@ -55,14 +53,12 @@ class AddQuestionState extends State<AddQuestionPage> {
     setupQuestion.content = _contentController.text.trim();
 
     if (setupQuestion.content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Provide a question")),
-      );
+      await showAlertDialog(context, message: "Provide a question");
       return;
     }
 
     if(!_validateAnswers()) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Provide 4 answers, with at least one correct")));
+      await showAlertDialog(context, message: "Provide 4 answers, with at least one correct");
       return;
     }
 
@@ -71,12 +67,9 @@ class AddQuestionState extends State<AddQuestionPage> {
     for(var answer in answers) {
       await addAnswer(questionId, answer.content, answer.isCorrect);
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Question saved")));
-    router.pop();
-    //router.pushNamed("/add-answers", extra: questionId); // TODO check for route
+
+    await showSaveDialog(context, message: "Question");
   }
-
-
 
   Widget _buildContext(BuildContext context) {
     return Scaffold(

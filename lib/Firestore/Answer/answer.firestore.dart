@@ -7,8 +7,8 @@ Future<void> addAnswer(String questionId, String content, bool isCorrect) async{
       'content' : content,
       'isCorrect': isCorrect,
     });
-  } on FirebaseException catch(e) {
-    print(e.message);
+  } catch(e) {
+    throw Exception('Api Error: $e');
   }
 }
 

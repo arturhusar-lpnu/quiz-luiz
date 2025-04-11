@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluter_prjcts/Firestore/FCM/notification.firestore.dart';
+import "package:fluter_prjcts/Firestore/LeaderBoard/leaderboard.firestore.dart";
 
-Future<User> signUpUser(String username, String email, String password) async {
+Future<User> signUpPlayer(String username, String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
@@ -15,23 +17,27 @@ Future<User> signUpUser(String username, String email, String password) async {
         "email": email,
         "createdAt": FieldValue.serverTimestamp(),
       });
+      await addToLeaderBoard(user.uid);
     }
+
+
     return user!;
   } catch (e) {
     throw ("Error registering user: $e");
   }
 }
 
-Future<User?> signInUser(String email, String password) async {
+Future<User?> signInPlayer(String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+
+    await initFCMToken();
+
     return userCredential.user;
   } catch (e) {
-    print("Error signing in: $e");
-    return null;
+    throw Exception("Error signing in: $e");
   }
 }
-

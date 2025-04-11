@@ -1,43 +1,33 @@
+import "package:fluter_prjcts/Actions/Buttons/action_button.dart";
 import "package:flutter/material.dart";
+import "package:fluter_prjcts/Router/router.dart";
 
-import "../../Router/router.dart";
-
-void showResultDialog(BuildContext context, {
-  required bool isCorrect,
-  required pointsGainMessage //+1, 0, -1, -2
-}) {
+Future<void> showSaveDialog (BuildContext context, {
+  required String message,
+}) async {
   showDialog(
     context: context,
     barrierDismissible: true,
     barrierColor: const Color.fromRGBO(0, 0, 0, 0.5), // dim background
     builder: (context) {
-      Future.delayed(const Duration(seconds: 2), () {
-        if(router.canPop()) {
-          router.pop();
-        }
-      });
       return Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.all(24),
-        child: _ResultPopup(isCorrect: isCorrect, pointsMessage: pointsGainMessage),
+        child: _SavePopup(message: message),
       );
     },
   );
 }
 
-class _ResultPopup extends StatelessWidget {
-  final bool isCorrect;
-  final String pointsMessage;
-  const _ResultPopup({
-    required this.isCorrect,
-    required this.pointsMessage,
-  });
+class _SavePopup extends StatelessWidget {
+  final String message;
+
+  const _SavePopup({required this.message});
 
   @override
   Widget build(BuildContext context) {
-    final Color topColor = isCorrect ? Colors.greenAccent : Colors.redAccent;
-    final String title = isCorrect ? "Correct" : "Whoops!";
-    final String message = isCorrect ? "You guessed it right\n $pointsMessage" : "Wrong guess\n $pointsMessage";
+    final Color topColor = Colors.greenAccent;
+    final String title = "$message saved!";
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -57,6 +47,7 @@ class _ResultPopup extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
           ),
@@ -71,12 +62,19 @@ class _ResultPopup extends StatelessWidget {
             ),
           ),
           child: Center(
-            child: Text(
-              message,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+            child: ActionButton(
+                text: "Ok",
+                textColor: Colors.black,
+                onPressed: () async{
+                  router.pop();
+                  await Future.delayed(Duration(milliseconds: 200));
+                  if (router.canPop()) {
+                    router.pop(); // go back to previous screen
+                  }
+                },
+                color: topColor,
+                width: 100,
+                height: 50
             ),
           ),
         ),

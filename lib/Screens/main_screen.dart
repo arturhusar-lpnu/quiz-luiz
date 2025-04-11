@@ -1,9 +1,9 @@
 import 'package:fluter_prjcts/Router/router.dart';
 import 'package:fluter_prjcts/Screens/topics.screen.dart';
+import 'package:fluter_prjcts/Screens/profile.screen.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'games_screen.dart';
-import 'profile_screen.dart';
 import 'stats_screen.dart';
 
 enum ScreensEnum {

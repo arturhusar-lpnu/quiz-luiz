@@ -7,7 +7,14 @@ class ScreenTitle extends StatelessWidget{
     @override
     Widget build(BuildContext context) {
       return Center(
-        child: Text(title, style: TextStyle(fontSize: 32, color: Colors.amber)),
+        child: Text(
+          title,
+          style: TextStyle(
+              fontSize: 32,
+              color: Colors.amber
+          ),
+          textAlign: TextAlign.center,
+        ),
       );
     }
 }

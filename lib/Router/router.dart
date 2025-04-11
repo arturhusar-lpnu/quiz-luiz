@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:fluter_prjcts/Screens/waiting_room.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluter_prjcts/Models/game_data.dart';
 import "package:fluter_prjcts/Screens/main_screen.dart";
 import 'package:fluter_prjcts/Pages/TopicSetup/add_question.page.dart';
 import 'package:fluter_prjcts/Screens/create_topic.screen.dart';
@@ -9,11 +12,14 @@ import 'package:fluter_prjcts/Pages/TopicSetup/question_list.page.dart';
 import 'package:fluter_prjcts/Screens/sign_in.screen.dart';
 import 'package:fluter_prjcts/Screens/sign_up.screen.dart';
 
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
   initialLocation: '/sign-in',
   redirect: (context, state) {
     final isLoggedIn = FirebaseAuth.instance.currentUser != null;
-    final isLoggingIn = state.matchedLocation == '/sign-in';
+    final isLoggingIn = state.matchedLocation == '/sign-in' || state.matchedLocation == '/sign-up';
 
     if (!isLoggedIn && !isLoggingIn) {
       return '/sign-in';
@@ -38,8 +44,8 @@ final GoRouter router = GoRouter(
       name: "/join-game",
       path: "/join-game",
       builder: (context, state) {
-        final gameId = state.extra as String;
-        return JoinGameScreen(gameId: gameId);
+        final gameData = state.extra as GameData;
+        return JoinGameScreen(gameData: gameData);
       },
     ),
     GoRoute(path: '/create-topic', builder: (context, state) => CreateTopicScreen()),
@@ -58,6 +64,13 @@ final GoRouter router = GoRouter(
         final topicId = state.extra as String;
         return AddQuestionPage(topicId: topicId);
       },
+    ),
+    GoRoute(
+      path: "/waiting-room",
+      builder: (context, state) {
+        final gameData = state.extra as GameData;
+        return WaitingRoomScreen(gameData : gameData);
+      }
     ),
   ],
 );

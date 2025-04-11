@@ -29,8 +29,19 @@ class GameController {
     playerIds = [player1Id, player2Id];
   }
 
+  Future<void> _checkId() async{
+    if(gameSetup.id.isEmpty) {
+      gameSetup.id = await addGame(gameSetup.type, gameSetup.mode);
+    }
+  }
+
   Game game(){
     return gameSetup;
+  }
+
+  Future<String> getGameId() async{
+    await _checkId();
+    return gameSetup.id;
   }
 
   void _getCollection(GameMode mode) {
@@ -48,18 +59,14 @@ class GameController {
   }
 
   Future<void> addTopics() async{
-    if(gameSetup.id.isEmpty) {
-      await addGame(gameSetup.type, gameSetup.mode);
-    }
+    await _checkId();
 
     await addTopicsToGame(gameSetup.id, topicIds);
   }
 
   Future<void> addPlayers() async {
     try {
-      if(gameSetup.id.isEmpty) {
-        gameSetup.id = await addGame(gameSetup.type, gameSetup.mode);
-      }
+      await _checkId();
 
       if(playerIds.isEmpty) {
         throw Exception("Add players");
@@ -90,7 +97,7 @@ class GameController {
     List<Player> players = [];
     for(var playerId in playerIds) {
       var player = await getPlayer(playerId);
-      players.add(player);
+      players.add(player!);
     }
 
     return players;
@@ -161,7 +168,7 @@ Future<List<Player>> getGamePlayers(gameId, GameMode mode) async {
   List<Player> players = [];
   for(var playerId in playerIds) {
     var player = await getPlayer(playerId);
-    players.add(player);
+    players.add(player!);
   }
 
   return players;

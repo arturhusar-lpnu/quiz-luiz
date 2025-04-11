@@ -56,6 +56,14 @@ Future<void> updateTopic(String topicId, String? title, String? description) asy
       await topicRef.update(updateQuery);
     }
   } catch(e) {
-    print(e);
+    throw Exception("API Error: $e");
   }
+}
+
+Future<List<Topic>> getSolvedTopics(String playerId) async {
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('solved-topics')
+      .where('playerId', isEqualTo: playerId)
+      .get();
+  return snapshot.docs.map((doc) => Topic.fromFirestore(doc)).toList();
 }

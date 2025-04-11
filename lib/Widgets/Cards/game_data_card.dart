@@ -1,25 +1,21 @@
+import "package:fluter_prjcts/Models/game_data.dart";
+import "package:fluter_prjcts/Screens/loading_screen.dart";
 import "package:flutter/material.dart";
-import "package:fluter_prjcts/Models/game.dart";
-import "package:fluter_prjcts/Models/player.dart";
-import "package:fluter_prjcts/Models/topic.dart";
+import "package:fluter_prjcts/Widgets/user_image.helper.dart";
 
 
-class GameSpecsCard extends StatelessWidget {
+class GameDataCard extends StatelessWidget {
   final double width;
   final double height;
-  final Game game;
-  final List<Player> players;
-  final List<Topic> topics;
+  final GameData gameData;
   final Color headerBackColor;
   final Color bodyBackColor;
   final Color titleColor;
   final String titleText;
 
-  const GameSpecsCard({
+  const GameDataCard({
     super.key,
-    required this.game,
-    required this.topics,
-    required this.players,
+    required this.gameData,
     required this.width,
     required this.height,
     required this.headerBackColor,
@@ -39,10 +35,14 @@ class GameSpecsCard extends StatelessWidget {
     return parts.join(" ");
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final String type = _correctName(game.type.name);
-    final String mode = _correctName(game.mode.name);
+  Future<ImageProvider> fetchOpponentImage() async{
+    return await fetchProfileImage(gameData.invitedPlayer.id);
+  }
+
+  Widget buildContent(BuildContext context, ImageProvider playerImage) {
+    final String type = _correctName(gameData.game.type.name);
+    final String mode = _correctName(gameData.game.mode.name);
+    playerImage;
     return Container(
       width: width,
       height: height,
@@ -68,13 +68,12 @@ class GameSpecsCard extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   padding: const EdgeInsets.all(12),
-                  child: Icon(Icons.person, size: 50), //TODO change to user profile-image
+                  child: Image(image: playerImage, width: 60, height: 60,)
                 ),
-                const SizedBox(width: 8), // Space between icon and text
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     titleText,
-                    //
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -108,7 +107,7 @@ class GameSpecsCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Topics: ${topics.join(", ")}",
+                      "Topics: ${gameData.topics.join(", ")}",
                       style: TextStyle(
                         color: Color(0xFF929292),
                         fontSize: 20,
@@ -121,6 +120,16 @@ class GameSpecsCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingScreen(
+        future: fetchOpponentImage,
+        builder: buildContent,
+        loadingText: "Who can it be",
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     );
   }
 }

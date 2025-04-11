@@ -56,7 +56,6 @@ class PlayerCard extends StatelessWidget {
               FutureBuilder<ImageProvider>(
                   future: _fetchProfileImage(player),
                   builder: (context, snapshot) {
-                    // Handling the different states of the Future
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Text(
                         "Loading...",

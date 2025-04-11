@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:fluter_prjcts/Firestore/Player/sign_user.dart";
+import "package:fluter_prjcts/Firestore/Player/player.auth.firestore.dart";
 
 import "package:fluter_prjcts/Firestore/Player/player.firestore.dart";
 
@@ -34,7 +34,7 @@ class SignUpState extends State<SignUpScreen> {
               router.go('/');
             });
 
-            // Show empty container briefly to allow frame callback
+            //empty container to allow frame callback
             return const SizedBox.shrink();
           },
         ),
@@ -49,9 +49,9 @@ class SignUpState extends State<SignUpScreen> {
       final username = _usernameController.text.trim();
 
       await checkUsername(username);
-      await signUpUser(username, email, password);
+      await signUpPlayer(username, email, password);
 
-      await signInUser(email, password);
+      await signInPlayer(email, password);
     } catch(e) {
       throw Exception("Auth error. $e");
     }
@@ -65,7 +65,6 @@ class SignUpState extends State<SignUpScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +73,7 @@ class SignUpState extends State<SignUpScreen> {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               Expanded(
                 child: Center(
                   child: Column(
@@ -135,7 +134,7 @@ class SignUpState extends State<SignUpScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                     ],
                   ),
                 ),

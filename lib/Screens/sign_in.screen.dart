@@ -1,6 +1,6 @@
 import "package:fluter_prjcts/Router/router.dart";
 import "package:flutter/material.dart";
-import "package:fluter_prjcts/Firestore/Player/sign_user.dart";
+import "package:fluter_prjcts/Firestore/Player/player.auth.firestore.dart";
 
 
 class SignInScreen extends StatefulWidget {
@@ -18,8 +18,8 @@ class SignInState extends State<SignInScreen> {
     try {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
-      await signInUser(email, password);
-      print("logged in");
+      await signInPlayer(email, password);
+      router.push("/");
     } catch(e) {
       throw Exception("Auth error. Check email or password. Sign Up for a new account");
     }
@@ -101,7 +101,7 @@ class SignInState extends State<SignInScreen> {
                             const Text("Not a member? ", style: TextStyle(fontSize: 18),),
                             TextButton(
                               onPressed: () {
-                                router.go('/sign-up');
+                                router.push('/sign-up');
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.amber,

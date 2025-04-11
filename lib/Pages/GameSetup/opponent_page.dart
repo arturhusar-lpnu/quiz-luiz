@@ -31,6 +31,10 @@ class OpponentPageState extends State<OpponentPage> {
 
   Future<Player> getOpponent(String opponentId) async{
     Player? player = await getPlayer(opponentId);
+    if(player == null) {
+      throw Exception("Opponent not found");
+    }
+
     return player;
   }
 
