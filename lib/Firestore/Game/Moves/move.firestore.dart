@@ -7,7 +7,7 @@ Future<void> makeMove(String gameId, String playerId, String questionId, String 
 
   final answerRef = await db.collection("answers").doc(answerId).get();
 
-  final answer = answerRef.data() as Answer;
+  final answer = Answer.fromFirestore(answerRef);
 
   await FirebaseFirestore.instance.collection("moves").add({
     "gameId": gameId,
@@ -17,7 +17,7 @@ Future<void> makeMove(String gameId, String playerId, String questionId, String 
   });
 }
 
-Future<Move?> getMove(String gameId, String playerId, String questionId) async {
+Future<Move> getMove(String gameId, String playerId, String questionId) async {
   final snapshot = await FirebaseFirestore.instance
       .collection("moves")
       .where("gameId", isEqualTo: gameId)
@@ -26,7 +26,7 @@ Future<Move?> getMove(String gameId, String playerId, String questionId) async {
       .limit(1)
       .get();
 
-  if(snapshot.docs.isEmpty) return null;
+  if(snapshot.docs.isEmpty) throw Exception("Cant find the move");
 
   final doc = snapshot.docs.first;
 

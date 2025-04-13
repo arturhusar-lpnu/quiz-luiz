@@ -71,19 +71,19 @@ class FinalSetupState extends State<FinalSetupPage> {
     return currPl;
   }
 
-  Future<void> _addGame(GameData gameData) async {
-    Game game = gameData.game;
-    GameController controller = GameController(gameSetup: game);
-
-    controller.setTopicIds(widget.selectedTopicsIds);
-    controller.setPlayers(widget.currentUserId, widget.selectedOpponentId);
-
-    await controller.addTopics();
-    await controller.addPlayers();
-    gameData.game.id = await controller.getGameId();
-    await sendNotification(gameData.invitedPlayer.id, gameData);
-    router.push("/waiting-room", extra: gameData);
-  }
+  // Future<void> _addGame(GameData gameData) async {
+  //   Game game = gameData.game;
+  //   GameController controller = GameController(gameSetup: game);
+  //
+  //   controller.setTopicIds(widget.selectedTopicsIds);
+  //   controller.setPlayers(widget.currentUserId, widget.selectedOpponentId);
+  //
+  //   await controller.addTopics();
+  //   await controller.addPlayers();
+  //   gameData.game.id = await controller.getGameId();
+  //   await sendNotification(gameData.invitedPlayer.id, gameData);
+  //   router.push("/waiting-room", extra: gameData);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +140,8 @@ class FinalSetupState extends State<FinalSetupPage> {
                     color: Color(0xFF6E3DDA),
                     width: 220,
                     height: 70,
-                    onPressed: () => _addGame(gameData),
+                    //onPressed: () => _addGame(gameData),
+                    onPressed: () => {},//_addGame(gameData),
                   ),
                 ),
               ),

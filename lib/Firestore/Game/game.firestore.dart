@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluter_prjcts/Firestore/Game/DeathRun/death_run.firestore.dart';
-import 'package:fluter_prjcts/Firestore/Player/player.firestore.dart';
 import 'package:fluter_prjcts/Models/Enums/game_mode.enum.dart';
 import 'package:fluter_prjcts/Models/Enums/game_type.enum.dart';
 import 'package:fluter_prjcts/Models/game.dart';
-import 'package:fluter_prjcts/Models/player.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 
@@ -12,21 +10,20 @@ class GameController {
   late Game gameSetup;
   late String gameCollection;
   late Set<String> topicIds;
-  late List<String> playerIds;
+  final String hostId;
+  final String opponentId;
 
   GameController({
     required this.gameSetup,
+    required this.topicIds,
+    required this.hostId,
+    required this.opponentId,
   }) {
     _getCollection(gameSetup.mode);
   }
 
-
   void setTopicIds(Set<String> topics) {
     topicIds = topics;
-  }
-
-  void setPlayers(String player1Id, String player2Id) {
-    playerIds = [player1Id, player2Id];
   }
 
   Future<void> _checkId() async{
@@ -64,43 +61,117 @@ class GameController {
     await addTopicsToGame(gameSetup.id, topicIds);
   }
 
-  Future<void> addPlayers() async {
+  Future<void> newGame() async {
     try {
       await _checkId();
 
-      if(playerIds.isEmpty) {
-        throw Exception("Add players");
-      }
-
       await FirebaseFirestore.instance.collection(gameCollection).doc(gameSetup.id).set({
         "players" : {
-          playerIds.first: {
+          "host" : {
+            "id" : hostId,
             "fails": 0,
             "score": 0,
           },
-          playerIds.last: {
+          "opponent" : {
+            "id": opponentId,
             "fails": 0,
             "score": 0,
           }
         },
         "status" : "inProgress",
         "currentQuestion" : "",
-        "winner" : null,
+        "winner" : "",
       });
     } catch (e) {
       throw Exception("API Error: could not add $gameCollection game");
     }
   }
 
-  Future<List<Player>> getGamePlayers() async {
-    List<String> playerIds =  await getPlayerIds(gameSetup.id, gameCollection);
-    List<Player> players = [];
-    for(var playerId in playerIds) {
-      var player = await getPlayer(playerId);
-      players.add(player!);
-    }
+  Future<String> getCurrentQuestion() async{
+    final doc = await getGameDoc();
 
-    return players;
+    final String questionId = doc["currentQuestion"];
+
+    return questionId;
+  }
+
+  Future getGameDoc() async {
+    final doc = await FirebaseFirestore.instance
+        .collection(gameCollection)
+        .doc(gameSetup.id)
+        .get();
+
+    if(!doc.exists) throw Exception("No game found");
+
+    return doc;
+  }
+
+
+  Future<DocumentReference<Map<String, dynamic>>>
+    getGameDocRef() async {
+    final gameDocRef = FirebaseFirestore.instance
+        .collection(gameCollection)
+        .doc(gameSetup.id);
+    return gameDocRef;
+  }
+
+
+
+  Future addPointToHost() async {
+    final gameDocRef = await getGameDocRef();
+
+    await gameDocRef.update({
+      'players.host.score': FieldValue.increment(1),
+    });
+  }
+
+  Future addPointToOpponent() async {
+    final gameDocRef = await getGameDocRef();
+
+    await gameDocRef.update({
+      'players.opponent.score': FieldValue.increment(1),
+    });
+  }
+
+  Future addFailToHost() async {
+    final gameDocRef = await getGameDocRef();
+
+    await gameDocRef.update({
+      'players.host.fails': FieldValue.increment(1),
+    });
+  }
+
+  Future addFailToOpponent() async {
+    final gameDocRef = await getGameDocRef();
+
+    await gameDocRef.update({
+      'players.opponent.fails': FieldValue.increment(1),
+    });
+  }
+
+  Future<String> getWinner() async {
+    final doc = await getGameDoc();
+
+    final String winner = doc["winner"];
+
+    return winner;
+  }
+
+  Future<Map<String, dynamic>> getHostInfo() async {
+    final doc = await getGameDoc();
+
+    final host = doc["players"]["host"];
+
+    return host;
+  }
+
+
+  Future<Map<String, dynamic>> getOpponentInfo() async {
+    final doc = await getGameDoc();
+
+    final opponent = doc["players"]["opponent"];
+
+    return opponent;
   }
 
   Future<List<Topic>> getTopics() async {
@@ -147,49 +218,6 @@ Future<String> addGame(GameType type, GameMode mode) async{
     return game.id;
   } catch(e) {
     throw(Exception("API error: could not add a game"));
-  }
-}
-
-Future<List<Player>> getGamePlayers(gameId, GameMode mode) async {
-  String gameCollection = "";
-  switch(mode) {
-    case GameMode.death_run:
-      gameCollection = "death-runs";
-      break;
-    case GameMode.first_to_15:
-      gameCollection = "first-to";
-      break;
-    case GameMode.in_a_row:
-      gameCollection = "in-a-row";
-      break;
-  }
-
-  List<String> playerIds =  await getPlayerIds(gameId, gameCollection);
-  List<Player> players = [];
-  for(var playerId in playerIds) {
-    var player = await getPlayer(playerId);
-    players.add(player!);
-  }
-
-  return players;
-}
-
-Future<List<String>> getPlayerIds(String gameId, String collection) async {
-  try {
-    final docSnapshot = await FirebaseFirestore.instance
-        .collection(collection)
-        .doc(gameId)
-        .get();
-
-    if (docSnapshot.exists) {
-      final data = docSnapshot.data();
-      final playersMap = data?['players'] as Map<String, dynamic>;
-      return playersMap.keys.toList();
-    } else {
-      throw Exception("Game not found");
-    }
-  } catch (e) {
-    throw Exception("API Error fetching players");
   }
 }
 
