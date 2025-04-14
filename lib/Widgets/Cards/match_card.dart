@@ -78,8 +78,8 @@ class MatchCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 40,),
-                  button,
+                  const SizedBox(width: 20,),
+                  button
                 ],
               ),
             ],

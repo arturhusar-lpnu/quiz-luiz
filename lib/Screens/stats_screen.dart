@@ -1,24 +1,14 @@
+import 'package:fluter_prjcts/Blocs/LeaderboardBLoC/leaderboard_bloc.dart';
 import 'package:fluter_prjcts/Pages/LeaderBoard/leader_board.list.dart';
 import 'package:flutter/material.dart';
-import 'package:fluter_prjcts/Screens/loading_screen.dart';
 import 'package:fluter_prjcts/Models/ranked_player.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Actions/Buttons/back_button.dart';
-import '../Firestore/LeaderBoard/leaderboard.firestore.dart';
 import '../Widgets/Other/screen_title.dart';
+import '../Widgets/PopUp/error.popup.dart';
 
 class StatsScreen extends StatelessWidget {
   const StatsScreen({super.key});
-
-  Future<List<RankedPlayer>> fetchTopics() async {
-    return await fetchRankedPlayers();
-  }
-
-  Widget _buildLeaderBoardList(BuildContext context, List<RankedPlayer> rankedPlayers) {
-
-    return LeaderBoardList(
-      rankedPlayers: rankedPlayers,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +59,12 @@ class StatsScreen extends StatelessWidget {
                         ),
                         indicator: BoxDecoration(
                           color: Color(0xFF7173ff),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          )
                         ),
+                        indicatorSize: TabBarIndicatorSize.tab,
                         tabs: [
                           Tab(text: 'Leaderboard'),
                           Tab(text: 'Match history'),
@@ -77,27 +72,12 @@ class StatsScreen extends StatelessWidget {
                       ),
                     ),
 
-                    /// TabBarView - Вміст кожної вкладки
+                    /// TabBarView
                     Expanded(
                       child: TabBarView(
                         children: [
                           /// TAB 1: Leaderboard
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF4d5061),
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(12),
-                                bottomRight: Radius.circular(12),
-                              ),
-                            ),
-                            child: LoadingScreen(
-                              future: fetchTopics,
-                              builder: _buildLeaderBoardList,
-                              loadingText: "Almost there",
-                              backgroundColor: Color(0xFF4d5061),
-                            ),
-                          ),
+                          LeaderBoardWidget(),
 
                           /// TAB 2: Match History
                           Container(
@@ -127,5 +107,72 @@ class StatsScreen extends StatelessWidget {
       ),
     );
   }
+}
 
+class LeaderBoardWidget extends StatefulWidget {
+  const LeaderBoardWidget({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _LeaderBoardState();
+}
+
+class _LeaderBoardState extends State<LeaderBoardWidget> {
+  late LeaderBoardBloc lbBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    lbBloc = LeaderBoardBloc();
+    lbBloc.add(SubscribeLeaderBoardEvent());
+  }
+
+  Widget _buildLeaderBoardList(BuildContext context, List<RankedPlayer> rankedPlayers) {
+    return LeaderBoardList(
+      rankedPlayers: rankedPlayers,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: lbBloc,
+      child: BlocBuilder<LeaderBoardBloc, LeaderBoardState> (
+          builder: (context, state) {
+            if(state is LeaderBoardLoadSuccess) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(
+                  color: Color(0xFF4d5061),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: _buildLeaderBoardList(
+                    context,
+                    state.rankedPlayers
+                ),
+              );
+            } else if(state is LeaderBoardLoadFailure) {
+              showErrorDialog(
+                context: context,
+                icon: Icons.error_outlined, title: 'Api Error',
+                message: state.errorMessage,
+                onRetry: () {  },
+              );
+              return SizedBox(height: 0);
+            }
+            return Column(
+              children: [
+                const Center(
+                    child: Text(
+                        "Loading...")
+                ),
+                CircularProgressIndicator()
+              ],
+            );
+          }
+      ),
+    );
+  }
 }

@@ -41,6 +41,7 @@ class LeaderboardEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String pointsMessage = "$points Point${points == 1 ? "" : "s"}";
     return InkWell(
       onTap: () => _onTap(context),  // Navigate to the stats page
       child: Container(
@@ -66,8 +67,7 @@ class LeaderboardEntry extends StatelessWidget {
                 Text(name, style: _textStyle()),
               ],
             ),
-            // Points
-            Text("$points Points", style: _textStyle()),
+            Text(pointsMessage, style: _textStyle()),
           ],
         ),
       ),

@@ -67,13 +67,8 @@ class _GameTopicsPageState extends State<GameTopicsPage> {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              const Text(
-                "Select topic(s) of the game",
-                style: TextStyle(color: Colors.amber, fontSize: 24),
-              ),
-              const SizedBox(height: 20),
               Text(
-                "Selected ${widget.selectedTopics.length} game topic(s).\n$totalQuestions total questions",
+                "Selected ${widget.selectedTopics.length} game topic(s)",
                 style: const TextStyle(color: Colors.white, fontSize: 20),
                 textAlign: TextAlign.center,
               ),

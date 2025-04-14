@@ -17,9 +17,8 @@ Future<void> initFCMToken() async {
 }
 
 
-Future<void> sendNotification(String playerId, GameData gameData) async {
-  const String apiUrl = "https://quiz-luiz-api-1.onrender.com/sendNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
-  //const String apiUrl = "http://192.168.137.109:3000/sendNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
+Future<void> sendGameInviteNotification(String playerId, GameData gameData) async {
+  const String apiUrl = "https://quiz-luiz-api-1.onrender.com/sendGameInviteNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
 
   final response = await http.post(
     Uri.parse(apiUrl),
@@ -29,11 +28,33 @@ Future<void> sendNotification(String playerId, GameData gameData) async {
       'title': 'Quiz-Luiz Game Invite',
       'body': 'You are invited for a game with ${gameData.hostPlayer.username}',
       'gameData': gameData.toJson(),
+      'type' : "game-invite",
     }),
   );
   if(response.statusCode == 200) {
     print("Notification sent");
   } else if(response.statusCode == 500) {
     print("Error sending notification");
+  }
+}
+
+Future<void> sendFriendInviteNotification(String playerId, String friendId) async {
+  const String apiUrl = "https://quiz-luiz-api-1.onrender.com/sendFriendInviteNotification"; //apiUrl : https://quiz-luiz-api-1.onrender.com/
+
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'playerId': playerId,
+      'title': 'Quiz-Luiz Friend Invite',
+      'body': 'New friend is waiting',
+      'friendId': friendId,
+      'type' : "friend-invite",
+    }),
+  );
+  if(response.statusCode == 200) {
+    print("[Friend-Invite] Notification sent");
+  } else if(response.statusCode == 500) {
+    print("[Friend-Invite] Error sending notification");
   }
 }

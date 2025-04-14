@@ -6,18 +6,17 @@ import "package:fluter_prjcts/Widgets/Other/screen_title.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/Widgets/title_input.dart";
 import "package:fluter_prjcts/Pages/TopicSetup/Widgets/description_title.dart";
-
-import "../Actions/Buttons/back_button.dart";
+import "package:fluter_prjcts/Actions/Buttons/back_button.dart";
 
 class CreateTopicScreen extends StatefulWidget {
   const CreateTopicScreen({super.key});
 
   @override
-  CreateTopicState createState() => CreateTopicState();
+  State<CreateTopicScreen> createState() => _CreateTopicState();
 }
 
 
-class CreateTopicState extends State<CreateTopicScreen> {
+class _CreateTopicState extends State<CreateTopicScreen> {
   Topic setupTopic = Topic(
       id: '',
       title: '',
@@ -40,47 +39,51 @@ class CreateTopicState extends State<CreateTopicScreen> {
 
     String topicId = await addTopic(setupTopic.title, setupTopic.description);
 
-    router.pushNamed("/question-list", extra: topicId);
+    router.pushReplacementNamed("/question-list", extra: topicId);
   }
 
   Widget _buildContext(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20),
-              Align(
-                  alignment: Alignment.topLeft,
-                  child:
-                  Row(
-                    children: [
-                      ReturnBackButton(
-                          iconColor: Colors.amber,
-                      ),
-                      SizedBox(width: 40),
-                      ScreenTitle(title: "New Topic")
-                    ],
-                  )
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 20),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ReturnBackButton(iconColor: Colors.amber),
+                ),
+                Center(child: ScreenTitle(title: "New Topic")),
+              ],
+            ),
+            // Instead of using another Center widget, use MainAxisAlignment.center here
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TopicTitleWidget(controller: _titleController),
+                    const SizedBox(height: 16),
+                    TopicDescriptionWidget(controller: _descriptionController),
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
-              BackButton(),
-              SizedBox(height: 20),
-              TopicTitleWidget(controller: _titleController),
-              SizedBox(height: 16),
-              TopicDescriptionWidget(controller: _descriptionController),
-              SizedBox(height: 32),
-              SaveTopicButton(
-                text: "Save",
-                color: Color(0xFF6E3DDA),
-                width: double.infinity,
-                height: 70,
-                onPressed: _saveTopic,
-              ),
-            ],
-          ),
+            ),
+            SaveTopicButton(
+              text: "Save",
+              color: Color(0xFF6E3DDA),
+              width: double.infinity,
+              height: 70,
+              onPressed: _saveTopic,
+            ),
+            const SizedBox(height: 32),
+          ],
         ),
       ),
     );

@@ -66,13 +66,14 @@ class GameTypePageState extends State<GameTypePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF3A3D4D),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
+      child: ListView(
         children: [
           const Text("Choose Game Type", style: TextStyle(color: Colors.amber, fontSize: 24)),
           const SizedBox(height: 20),
@@ -82,8 +83,8 @@ class GameTypePageState extends State<GameTypePage> {
                 index: 0,
                 isSelected: selectedIndex ==  0,
                 onSelect: (index) => updateSelection(index, GameType.ranked),
-                width: 300,
-                height: 250,
+                width: screenSize.width * 0.8,
+                height: screenSize.height * 0.4,
                 headerBackColor: const Color(0xFF5DD39E),
                 bodyBackColor: const Color(0xFF30323D),
                 titleWidget:
@@ -108,8 +109,8 @@ class GameTypePageState extends State<GameTypePage> {
                 index: 1,
                 isSelected: selectedIndex == 1,
                 onSelect: (index) => updateSelection(index, GameType.friendly),
-                width: 300,
-                height: 250,
+                width:  screenSize.width * 0.8,
+                height: screenSize.height * 0.4,
                 headerBackColor: const Color(0xFF7173FF),
                 bodyBackColor: const Color(0xFF30323D),
                 titleWidget: Text("Friendly match",

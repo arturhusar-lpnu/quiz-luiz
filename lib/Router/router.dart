@@ -1,3 +1,4 @@
+import 'package:fluter_prjcts/Firestore/Player/current_player.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Screens/waiting_room.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +18,7 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/sign-in',
-  redirect: (context, state) {
+  redirect: (context, state) async {
     final isLoggedIn = FirebaseAuth.instance.currentUser != null;
     final isLoggingIn = state.matchedLocation == '/sign-in' || state.matchedLocation == '/sign-up';
 
@@ -26,6 +27,7 @@ final GoRouter router = GoRouter(
     }
 
     if (isLoggedIn && isLoggingIn) {
+      await CurrentPlayer.init();
       return '/';
     }
 

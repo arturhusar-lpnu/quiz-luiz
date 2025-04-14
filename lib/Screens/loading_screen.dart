@@ -29,7 +29,7 @@ class LoadingScreen<T> extends StatelessWidget {
                     children: [
                       CircularProgressIndicator(
                         backgroundColor: Color(0xFF4D5061),
-                        color: backgroundColor,
+                        color: Colors.white,
                       ),
                       SizedBox(height: 10,),
                       Text(

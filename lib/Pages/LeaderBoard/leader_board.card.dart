@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Models/ranked_player.dart';
+import 'package:fluter_prjcts/Screens/loading_screen.dart';
+import 'package:fluter_prjcts/Widgets/user_image.helper.dart';
 
 class LeaderBoardCard extends StatefulWidget {
   final RankedPlayer rankedPlayer;
@@ -55,18 +57,21 @@ class _LeaderBoardCardState extends State<LeaderBoardCard> {
     color: Colors.black,
   );
 
-    @override
-    Widget build(BuildContext context) {
-      return InkWell(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFF30323d),  // Directly using the color passed in the constructor
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
+  Future<ImageProvider> _fetchProfileImage() async{
+    return await fetchProfileImage(widget.rankedPlayer.playerId);
+  }
+
+  Widget buildContent(BuildContext context, ImageProvider profileImage) {
+    return InkWell(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFF30323d),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
                 width: 130,
                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                 decoration: BoxDecoration(
@@ -74,58 +79,66 @@ class _LeaderBoardCardState extends State<LeaderBoardCard> {
                   borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
                 ),
                 child: Row(
-                  children: [
-                    // Rank & Profile
-                    Row(
-                      children: [
-                        Text("${widget.rankedPlayer.rank}${widget.rankedPlayer.rank != null ? _getOrdinal(widget.rankedPlayer.rank!) : ''}", style: _textStyle()),
-                        const SizedBox(width: 8),
-                        CircleAvatar(
-                          backgroundColor: Colors.black, // Icon background
-                          radius: 22,
-                          child: const Icon(Icons.person, color: Colors.white, size: 20),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-
-                  ]
+                    children: [
+                      // Rank & Profile
+                      Row(
+                        children: [
+                          Text("${widget.rankedPlayer.rank}${_getOrdinal(widget.rankedPlayer.rank)}", style: _textStyle()),
+                          const SizedBox(width: 8),
+                          Image(
+                            image: profileImage,
+                            width: 50,
+                            height: 50,
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                    ]
                 )
-              ),
+            ),
 
-              const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-              /// Questions Count
-              Expanded(
-                  child: Row(
-                      children: [
-                        Text(
-                          widget.rankedPlayer.username,
-                          textAlign: TextAlign.left,
+            /// Questions Count
+            Expanded(
+                child: Row(
+                    children: [
+                      Text(
+                        widget.rankedPlayer.username,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "${widget.rankedPlayer.points} Points",
+                          textAlign: TextAlign.right,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: _getColor(widget.rankedPlayer.rank),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Expanded(
-                          child: Text(
-                            "${widget.rankedPlayer.points} Points",
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: _getColor(widget.rankedPlayer.rank),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                      ]
-                  )
-              ),
-            ],
-          ),
+                      ),
+                      const SizedBox(width: 12),
+                    ]
+                )
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+    @override
+    Widget build(BuildContext context) {
+      return LoadingScreen(
+          future: _fetchProfileImage,
+          builder: buildContent, loadingText: "",
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       );
     }
 }

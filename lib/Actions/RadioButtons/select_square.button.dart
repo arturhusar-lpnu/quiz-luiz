@@ -21,7 +21,7 @@ class SelectSquareButton extends StatelessWidget {
         height: 30,
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
-          color: isSelected ? Colors.blueAccent : Colors.transparent,
+          color: isSelected ? Color(0xFF3AFFA3) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: borderColor,

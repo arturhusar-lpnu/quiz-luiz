@@ -85,6 +85,7 @@ class _TopicCardState extends State<TopicCard> {
                   widget.topic.title,
                   style: widget.titleStyle,
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
               ),
 

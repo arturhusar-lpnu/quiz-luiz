@@ -42,7 +42,6 @@ class GameSetupCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-
             Container(
               height: headerHeight,
               padding: const EdgeInsets.all(12),

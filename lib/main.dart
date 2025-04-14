@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluter_prjcts/Blocs/RecentTopicsBloc/recent_topics_bloc.dart';
 import 'package:fluter_prjcts/firebase_options.dart';
 import 'package:flutter/material.dart';
-import './Router/router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluter_prjcts/Router/router.dart';
 import "package:fluter_prjcts/Widgets/PopUp/error.popup.dart";
-import "package:fluter_prjcts/Firestore/FCM/receiver.firestore.dart";
 
+import 'Blocs/TopicBloc/topic_bloc.dart';
 import 'Firestore/FCM/notification.service.dart';
 
 void main() async{
@@ -31,7 +34,27 @@ void main() async{
     //receiveNotificationsInit();
     await NotificationService.instance.initialize();
 
-    runApp(MyApp());
+    final firestore = FirebaseFirestore.instance;
+
+    runApp(
+      MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => TopicBloc(firestore: firestore),
+            ),
+            BlocProvider(
+              create: (context) => RecentTopicsBloc(firestore: firestore),
+            ),
+            // BlocProvider(
+            //   create: (context) => QuestionBloc(firestore: firestore),
+            // ),
+            // BlocProvider(
+            //   create: (context) => AnswersBloc(firestore: firestore),
+            // ),
+          ],
+          child: MyApp()
+      ),
+    );
   }, (error, _) {
     _showGlobalError(error.toString());
   });
@@ -66,7 +89,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: router,
       theme: ThemeData.dark(),
-      // home: HomeScreen(),
     );
   }
 }

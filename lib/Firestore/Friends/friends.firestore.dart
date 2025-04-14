@@ -3,10 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 Future<Set<String>> getFriends(String playerId) async {
   final fireStore = FirebaseFirestore.instance.collection("friends");
 
-  //added friends by player
   final addedFriends = await fireStore.where("friendId", isEqualTo: playerId).get();
 
-  //player of friends
   final addedPlayer = await fireStore.where("playerId", isEqualTo: playerId).get();
 
   final friendIds = <String>{};
@@ -20,4 +18,16 @@ Future<Set<String>> getFriends(String playerId) async {
   }
 
   return friendIds;
+}
+
+Future addNewFriend(String playerId, String friendId) async {
+  final fireStore = FirebaseFirestore.instance.collection("friends");
+  try {
+    await fireStore.add({
+      "playerId" : playerId,
+      "friendId" : friendId,
+    });
+  } catch(e) {
+    throw Exception('Api Error: $e');
+  }
 }

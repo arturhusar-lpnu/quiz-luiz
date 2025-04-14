@@ -25,18 +25,18 @@ class NotificationService {
 
     await _setupMessageHandlers();
 
-    final token = await _messaging.getToken();
-    print('FCM Token: $token');
+    // final token =
+    await _messaging.getToken();
   }
 
   Future<void> _requestPermission() async {
-    final settings = await _messaging.requestPermission(
+    // final settings =
+    await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
       provisional: false,
     );
-    //print('Permission status: ${settings.authorizationStatus}');
   }
 
   Future<void> setupFlutterNotifications() async {
@@ -112,9 +112,16 @@ class NotificationService {
   void _handleBackgroundMessage(RemoteMessage message) {
     print("Background message received");
     if (message.notification != null) {
-      final gameDataMap = jsonDecode(message.data["gameData"]);
-      final gameData = GameData.fromMap(gameDataMap);
-      router.push("/join-game", extra: gameData);
+      final data = message.data;
+      if(data["type"] == "game-invite") {
+        final gameDataMap = jsonDecode(message.data["gameData"]);
+        final gameData = GameData.fromMap(gameDataMap);
+        router.push("/join-game", extra: gameData);
+      }
+
+      if(data["type"] == "friend-invite") {
+
+      }
     }
   }
 }

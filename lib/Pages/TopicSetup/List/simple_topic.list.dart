@@ -22,7 +22,7 @@ class SimpleTopicsList extends StatelessWidget {
           child: SimpleTopicCard(
             headerWidth: 150,
             topic: topic,
-            mainColor: Color(0xFF7173FF),
+            mainColor: const Color(0xFF7173FF),
             titleStyle: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

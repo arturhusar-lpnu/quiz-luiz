@@ -18,7 +18,7 @@ class LeaderBoardList extends StatelessWidget {
       itemBuilder: (context, index) {
         final rankedPlayer = rankedPlayers[index];
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: LeaderBoardCard(
             rankedPlayer: rankedPlayer,
             onCardTapped: () {

@@ -2,13 +2,13 @@ import "package:fluter_prjcts/Actions/Buttons/action_button.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Router/router.dart";
 
-Future<void> showErrorDialog({
+void showErrorDialog({
   required BuildContext context,
   required String title,
   required String message,
   required IconData icon,
   required VoidCallback onRetry,
-}) async {
+}) {
   showDialog(
     context: context,
     barrierDismissible: true,

@@ -1,13 +1,12 @@
-import "package:fluter_prjcts/Firestore/Question/question.firestore.dart";
-import "package:fluter_prjcts/Firestore/Topic/topic.firestore.dart";
-import "package:fluter_prjcts/Models/answer.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:fluter_prjcts/Blocs/QuestionBloc/question_bloc.dart";
 import "package:fluter_prjcts/Models/question.dart";
-import "package:fluter_prjcts/Screens/loading_screen.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Router/router.dart";
-import "../../Actions/Buttons/back_button.dart";
-import "../../Models/topic.dart";
-import "../../Widgets/Other/screen_title.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
+import "package:fluter_prjcts/Actions/Buttons/back_button.dart";
+import "package:fluter_prjcts/Blocs/AnswersBloc/answer_bloc.dart";
+import "package:fluter_prjcts/Widgets/Other/screen_title.dart";
 
 class QuestionListPage extends StatefulWidget {
   final String topicId;
@@ -22,110 +21,27 @@ class QuestionListPage extends StatefulWidget {
 
 
 class QuestionListState extends State<QuestionListPage> {
-  String? expandedQuestionId;
-  Map<String, List<Answer>> answerCache = {};
+  late QuestionBloc qBloc;
+  @override
+  void initState() {
+    super.initState();
+    final firestore = FirebaseFirestore.instance;
+    qBloc = QuestionBloc(firestore: firestore);
+    qBloc.add(SubscribeQuestions(widget.topicId));
+    // context.read<QuestionBloc>().add(SubscribeQuestions(widget.topicId));
+  }
 
   void _addQuestion() {
     router.pushNamed("/new-question", extra: widget.topicId);
   }
 
-  Future<Map<String, dynamic>> fetchData() async{
-    final topic = await getTopic(widget.topicId);
-    final questions = await getTopicQuestions(widget.topicId);
-
-    return { "topic": topic, "questions": questions };
-  }
-
-  Future<List<Answer>> _getAnswers(String questionId) async{
-    if(answerCache.containsKey(questionId)) return answerCache[questionId]!;
-
-    final answers = await getAnswers(questionId);
-    answerCache[questionId] = answers;
-    return answers;
-  }
-
-  Widget _buildAnswerList(List<Answer> answers) {
-    return Column(
-      children: answers.map((answer) {
-        return Card(
-          color: const Color(0xFF4D5061),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-          child: ListTile(
-            title: Text(
-              answer.content,
-              style: const TextStyle(color: Colors.white),
-            ),
-            trailing: Icon(
-              answer.isCorrect ? Icons.check_circle : Icons.cancel,
-              color: answer.isCorrect ? Colors.greenAccent : Colors.redAccent,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildQuestionList(BuildContext context, data) {
-    final topic = data["topic"] as Topic;
-    final questions = data["questions"] as List<Question>;
-
-    if (questions.isEmpty) {
-      return const Center(
-        child: Text(
-          "No questions available.",
-          style: TextStyle(fontSize: 18, color: Colors.white70),
-        ),
-      );
-    }
-
-    return ListView.separated(
+  Widget _buildQuestionList(BuildContext context, List<Question> questions) {
+    return ListView.builder(
       itemCount: questions.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final q = questions[index];
-        final isExpanded = q.id == expandedQuestionId;
-        return Column(
-          children: [
-            Card( color: const Color(0xFF3A3D49),
-              shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "${topic.title}: ${q.content}",
-                        style: const TextStyle(
-                          color: Colors.amberAccent,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        if(isExpanded) {
-                          setState(() => expandedQuestionId = null);
-                        } else {
-                          await _getAnswers(q.id);
-                          setState(() => expandedQuestionId = q.id);
-                        }
-                      },
-                      icon: Icon(
-                        isExpanded ? Icons.expand_less: Icons.expand_more),
-                      color: Colors.amber,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if(isExpanded && answerCache.containsKey(q.id))
-              _buildAnswerList(answerCache[q.id]!),
-          ],
+        return QuestionCard(
+          question: q,
         );
       },
     );
@@ -167,18 +83,172 @@ class QuestionListState extends State<QuestionListPage> {
             ),
 
             Expanded(
-              child: Center(
-                child: LoadingScreen(
-                  future: fetchData,
-                  builder: _buildQuestionList,
-                  loadingText: "Getting questions...",
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                ),
-              ),
+              child: BlocProvider.value(
+                  value: qBloc,
+                  child: BlocProvider.value(
+                      value: qBloc,
+                      child: BlocBuilder<QuestionBloc, QuestionState>(
+                          builder: (context, questionState) {
+                            if(questionState is QuestionsLoadSuccess) {
+                              final q = questionState.questions;
+                              if(q.isEmpty) {
+                                const Center(child: Text("No questions"));
+                              } else {
+                                return _buildQuestionList(context, questionState.questions);
+                              }
+                            }
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                      ),
+                  ),
+              )
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class QuestionCard extends StatefulWidget {
+  final Question question;
+
+  const QuestionCard({
+    super.key,
+    required this.question,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _QuestionCardState();
+}
+class _QuestionCardState extends State<QuestionCard> {
+  bool isExpanded = false;
+  late Question question;
+  @override
+  void initState() {
+    super.initState();
+    question = widget.question;
+  }
+
+  void toggleExpand(BuildContext context) {
+    setState(() {
+      isExpanded = !isExpanded;
+    });
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+          children: [
+            Card(
+              color: const Color(0xFF3A3D49),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        question.content,
+                        style: const TextStyle(
+                          color: Colors.amberAccent,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        toggleExpand(context);
+                      },
+                      icon: Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                      ),
+                      color: Colors.amber,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (isExpanded)
+              AnswersListWidget(questionId: question.id),
+          ],
+        );
+  }
+}
+
+
+class AnswersListWidget extends StatefulWidget {
+  const AnswersListWidget({
+    super.key,
+    required this.questionId,
+  });
+
+  final String questionId;
+
+  @override
+  State<StatefulWidget> createState() => _AnswersListState();
+
+}
+
+class _AnswersListState extends State<AnswersListWidget> {
+  late AnswersBloc _answersBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    final firestore = FirebaseFirestore.instance;
+    _answersBloc = AnswersBloc(firestore: firestore);
+    _answersBloc.add(SubscribeAnswers(widget.questionId));
+  }
+
+  @override
+  void dispose() {
+    _answersBloc.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      BlocProvider.value(
+        value: _answersBloc,
+        child: BlocBuilder<AnswersBloc, AnswerState>(
+          builder: (context, answersState) {
+            if(answersState is AnswerLoadSuccess) {
+              final answers = answersState.answers;
+              if (answers.isEmpty) {
+                return const Text("No answers");
+              } else {
+                return Column(
+                  children: answers.map((answer) {
+                    return Card(
+                      color: const Color(0xFF4D5061),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius
+                          .circular(12)),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 12),
+                      child: ListTile(
+                        title: Text(
+                          answer.content,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        trailing: Icon(
+                          answer.isCorrect ? Icons.check_circle : Icons.cancel,
+                          color: answer.isCorrect ? Colors.greenAccent : Colors
+                              .redAccent,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              }
+            }
+            return CircularProgressIndicator();
+          }
+      )
     );
   }
 }

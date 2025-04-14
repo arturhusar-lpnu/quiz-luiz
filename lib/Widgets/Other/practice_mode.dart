@@ -3,36 +3,38 @@ import 'package:fluter_prjcts/Widgets/Cards/match_card.dart';
 import 'package:fluter_prjcts/Models/match_details.dart';
 import 'package:fluter_prjcts/Actions/Buttons/practice_mode_buttons.dart';
 
-class PracticeMode extends StatelessWidget{
-  const PracticeMode({super.key});
+class SoloMode extends StatelessWidget{
+  const SoloMode({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF3A3D4D),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
+        // decoration: BoxDecoration(
+        //   color: const Color(0xFF3A3D4D),
+        //   borderRadius: BorderRadius.circular(12),
+        // ),
+        child: ListView(
           children: [
-            const Text("Practice", style: TextStyle(fontSize: 24, color: Colors.amber)),
+            // const Center(
+            //   child: Text("Solo", style: TextStyle(fontSize: 24, color: Colors.amber)),
+            // ),
             const SizedBox(height: 20,),
             Column(
               children: [
                 MatchCard(
                     matchDetails: MatchDetails(
-                        title: "Match with AI",
+                        title: "Death Run",
                         mode: "Death Run",
-                        type: "Random",
+                        type: "Practice",
                         topics: "Random"),
                     width: 336,
                     height: 151,
                     headerBackColor: Color(0xFF1DC379),
                     button: StartMatchWithAiButton(
                       text: "Start",
-                      fontSize: 24,
-                      width: 120,
+                      fontSize: 20,
+                      width: 100,
                       height: 46,
                       color: Color(0xFF5DD39E),
                     )
@@ -40,9 +42,9 @@ class PracticeMode extends StatelessWidget{
                 const SizedBox(height: 40,),
                 MatchCard(
                     matchDetails: MatchDetails(
-                        title: "Rerun Mistakes",
+                        title: "First To 15",
                         mode: "Death Run",
-                        type: "Random",
+                        type: "Practice",
                         topics: "Random"),
                     titleColor: Color(0xFFFFFFFF),
                     width: 336,
@@ -50,10 +52,29 @@ class PracticeMode extends StatelessWidget{
                     headerBackColor: Color(0xFF4F378A),
                     button: RerunMistakesButton(
                       text: "Start",
-                      fontSize: 24,
-                      width: 120,
+                      fontSize: 20,
+                      width: 100,
                       height: 46,
-                      color: Color(0xFFCFB9FF),
+                      color: Color(0xFF7944FD),
+                    )
+                ),
+                const SizedBox(height: 40,),
+                MatchCard(
+                    matchDetails: MatchDetails(
+                        title: "5 in a Row",
+                        mode: "Death Run",
+                        type: "Practice",
+                        topics: "Random"),
+                    titleColor: Colors.black,
+                    width: 336,
+                    height: 151,
+                    headerBackColor: Colors.amber,
+                    button: RerunMistakesButton(
+                      text: "Start",
+                      fontSize: 20,
+                      width: 100,
+                      height: 46,
+                      color: Colors.amber.shade100,
                     )
                 ),
               ],

@@ -61,8 +61,9 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStreak(BuildContext context, int days) {
     final hasStreak = days > 0;
+    final String streakMessage = hasStreak ? "$days day${days == 1 ? "" : "s"} streak" : "Keep it up";
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white10,
         border: Border.all(
@@ -83,7 +84,7 @@ class ProfileScreen extends StatelessWidget {
 
           const SizedBox(height: 20),
           Text(
-            hasStreak ? "$days day(s) streak" : "Keep it up",
+            streakMessage,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16
@@ -100,7 +101,7 @@ class ProfileScreen extends StatelessWidget {
     final points = rp.points;
 
     return Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white10,
           border: Border.all(
@@ -135,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildTopics(BuildContext context, { required int solved, required int allTopics}) {
     return Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white10,
           border: Border.all(
@@ -249,8 +250,8 @@ class ProfileScreen extends StatelessWidget {
                         await FirebaseAuth.instance.signOut();
                         router.go("/sign-in");
                       },
-                      color: const Color(0xFF7173FF),
-                      width: 171,
+                      color: const Color(0xFF6E3DDA),
+                      width: 170,
                       height: 65
                   ),
                 ),

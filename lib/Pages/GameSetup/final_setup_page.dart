@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:fluter_prjcts/Firestore/FCM/notification.firestore.dart';
 import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
 import 'package:fluter_prjcts/Models/game_data.dart';
@@ -41,9 +40,6 @@ class FinalSetupState extends State<FinalSetupPage> {
 
   Future<Player> fetchOpponentData(String opponentId) async {
     var opponentPlayer = await getPlayer(opponentId);
-    if(opponentPlayer == null) {
-      throw Exception("Player not found");
-    }
     return opponentPlayer;
   }
 
@@ -71,19 +67,20 @@ class FinalSetupState extends State<FinalSetupPage> {
     return currPl;
   }
 
-  // Future<void> _addGame(GameData gameData) async {
-  //   Game game = gameData.game;
-  //   GameController controller = GameController(gameSetup: game);
-  //
-  //   controller.setTopicIds(widget.selectedTopicsIds);
-  //   controller.setPlayers(widget.currentUserId, widget.selectedOpponentId);
-  //
-  //   await controller.addTopics();
-  //   await controller.addPlayers();
-  //   gameData.game.id = await controller.getGameId();
-  //   await sendNotification(gameData.invitedPlayer.id, gameData);
-  //   router.push("/waiting-room", extra: gameData);
-  // }
+  Future<void> _addGame(GameData gameData) async {
+    Game game = gameData.game;
+    GameController controller = GameController(
+        gameSetup: game,
+        topicIds: widget.selectedTopicsIds,
+        hostId: widget.currentUserId,
+        opponentId: widget.selectedOpponentId
+    );
+
+
+    gameData.game.id = await controller.getGameId();
+    await sendGameInviteNotification(gameData.invitedPlayer.id, gameData);
+    router.push("/waiting-room", extra: gameData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +137,8 @@ class FinalSetupState extends State<FinalSetupPage> {
                     color: Color(0xFF6E3DDA),
                     width: 220,
                     height: 70,
-                    //onPressed: () => _addGame(gameData),
-                    onPressed: () => {},//_addGame(gameData),
+                    onPressed: () => _addGame(gameData),
+                    //onPressed: () => {},//_addGame(gameData),
                   ),
                 ),
               ),

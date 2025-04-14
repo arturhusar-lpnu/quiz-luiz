@@ -74,11 +74,11 @@ class WaitingRoomScreen extends StatelessWidget {
               color: Color(0xFF5DD39E),
               width: 160,
               height: 60,
-              fontSize: 24,
+              fontSize: 20,
               userId: gameData.hostPlayer.id,
               opponentId: gameData.invitedPlayer.id,
               onInviteTapped: () async{
-                await sendNotification(gameData.invitedPlayer.id, gameData);
+                await sendGameInviteNotification(gameData.invitedPlayer.id, gameData);
               },
               isSelected: false,
             ),

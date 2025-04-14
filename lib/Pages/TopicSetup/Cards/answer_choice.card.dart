@@ -60,11 +60,6 @@ class AnswerChoiceState extends State<AnswerChoiceCard> {
       widget.onChanged?.call(widget.answer);
     }
   }
-  //
-  // Future<void> _toggleCorrectAnswer() async{
-  //   await updateAnswer(widget.answer.id, isCorrect: !widget.answer.isCorrect);
-  //   widget.onChanged?.call(widget.answer);
-  // }
 
   void _toggleCorrectAnswer() {
     setState(() {
@@ -74,8 +69,6 @@ class AnswerChoiceState extends State<AnswerChoiceCard> {
   }
   @override
   Widget build(BuildContext context) {
-    final String isCorrectText = widget.answer.isCorrect ? "Correct" : "";
-
     return SizedBox(
       width: widget.width,
       height: widget.height,
@@ -95,27 +88,6 @@ class AnswerChoiceState extends State<AnswerChoiceCard> {
             Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                      bottom: 5,
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(
-                          color: Colors.lightBlue,
-                          width: 1.0,
-                        ))
-                    ),
-                    child: Text(
-                      isCorrectText,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold
-                      ),
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
-                  SizedBox(width: 10),
                   SelectSquareButton(
                     isSelected: widget.answer.isCorrect,
                     onTap: _toggleCorrectAnswer,

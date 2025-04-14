@@ -99,7 +99,7 @@ class PlayerCard extends StatelessWidget {
           InviteButton(
               width: 110,
               height: 50,
-              fontSize: 20,
+              fontSize: 18,
               color: mainColor,
               userId: userId,
               opponentId: player.id,

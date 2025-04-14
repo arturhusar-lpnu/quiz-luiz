@@ -50,8 +50,8 @@ class InviteButtonState extends State<InviteButton> {
         ? _getLighterColor(widget.color, 0.1)
         : Colors.transparent;
     final String buttonText = widget.isSelected
-        ? "Invited"
-        : "Invite";
+        ? "Added"
+        : "Add";
 
     return SizedBox(
       width: widget.width,

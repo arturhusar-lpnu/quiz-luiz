@@ -76,6 +76,7 @@ class GameModeSelectorState extends State<GameModePage> {
 
   @override
   Widget build(BuildContext context) {
+    // final screenSize = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -127,7 +128,7 @@ class GameModeSelectorState extends State<GameModePage> {
                           isSelected: selectedIndex == index,
                           onSelect: (index) => updateSelection(index, gameMode),
                           width: 290,
-                          height: 350,
+                          height: 380,
                           headerBackColor: _getHeaderColor(gameMode),
                           headerHeight: 120,
                           bodyBackColor: const Color(0xFF30323D),

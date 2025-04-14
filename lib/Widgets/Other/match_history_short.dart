@@ -15,18 +15,23 @@ class MatchHistoryShort extends StatelessWidget{
         ),
         child: Column(
           children: [
-            Row(
+            Stack(
               children: [
-                const SizedBox(width: 20,),
-                Text("Match History", style: TextStyle(fontSize: 24, color: Colors.amber)),
-                const SizedBox(width: 140,),
-                Icon(Icons.more_horiz, color: Colors.white,)
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text("Match History", style: TextStyle(fontSize: 24, color: Colors.amber)),
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Icon(Icons.more_horiz, color: Colors.white,),
+                )
               ],
             ),
 
             const SizedBox(height: 20,),
             Center(
-                child: Row(
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
                   children: [
                     const SizedBox(width: 20),
                     MatchHistoryCard(

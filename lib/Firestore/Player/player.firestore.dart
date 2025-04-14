@@ -10,9 +10,6 @@ Future<String?> fetchUsername(String uid) async {
   return null;
 }
 
-// Future<List<String>> fetchPlayerFriends(String playerId) async{
-// }
-
 
 Future<List<Player>> getAllPlayers() async{
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('players').get();
@@ -28,7 +25,7 @@ Future<Player?> getCurrentPlayer() async{
   return await getPlayer(FirebaseAuth.instance.currentUser!.uid);
 }
 
-Future<Player?> getPlayer(String playerId) async {
+Future<Player> getPlayer(String playerId) async {
   var docSnapshot = await FirebaseFirestore.instance.collection("players").doc(playerId).get();
     if (!docSnapshot.exists || docSnapshot.data() == null) {
       throw Exception("Player not found");
