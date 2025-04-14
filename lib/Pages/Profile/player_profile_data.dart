@@ -7,7 +7,7 @@ import 'package:fluter_prjcts/Models/player.dart';
 class PlayerData {
   static Future<Map<String, dynamic>> fetchProfileData(String playerId) async {
     final player = await getPlayer(playerId);
-    final avatar = await fetchProfileImage(player!.id);
+    final avatar = await fetchProfileImage(player.id);
     return { "player": player, "avatar": avatar};
   }
 
