@@ -5,6 +5,7 @@ class Move {
   String gameId;
   String playerId;
   String questionId;
+  String answerId;
   bool isCorrect;
 
   Move({
@@ -12,7 +13,8 @@ class Move {
     required this.gameId,
     required this.playerId,
     required this.questionId,
-    required this.isCorrect,
+    required this.answerId,
+    required this.isCorrect
   });
 
   factory Move.fromFirestore(DocumentSnapshot doc) {
@@ -22,7 +24,8 @@ class Move {
       gameId: data['gameId'],
       playerId: data['playerId'],
       questionId: data['questionId'],
-      isCorrect: data['isCorrect'],
+      answerId: data['answerId'],
+      isCorrect: data['isCorrect']
     );
   }
 
@@ -30,8 +33,9 @@ class Move {
     return {
       'gameId': gameId,
       'playerId': playerId,
-      'isCorrect': isCorrect,
+      'answerId': answerId,
       'questionId': questionId,
+      'isCorrect' : isCorrect,
     };
   }
 }

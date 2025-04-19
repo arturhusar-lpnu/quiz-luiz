@@ -19,7 +19,7 @@ Future<Topic> getTopic(String topicId) async {
   return Topic.fromFirestore(snapshot);
 }
 
-Future<List<Topic>> getTopics() async {
+Future<List<Topic>> getAllTopics() async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('topics').get();
   return snapshot.docs.map((doc) => Topic.fromFirestore(doc)).toList();
 }
@@ -66,4 +66,13 @@ Future<List<Topic>> getSolvedTopics(String playerId) async {
       .where('playerId', isEqualTo: playerId)
       .get();
   return snapshot.docs.map((doc) => Topic.fromFirestore(doc)).toList();
+}
+
+Future<List<Topic>> getUnsolvedTopics(String playerId) async {
+  final allTopics = await getAllTopics();
+  final solved = await getSolvedTopics(playerId);
+
+  final solvedIds = solved.map((t) => t.id).toSet();
+
+  return allTopics.where((topic) => !solvedIds.contains(topic.id)).toList();
 }

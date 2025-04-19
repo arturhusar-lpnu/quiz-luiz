@@ -1,4 +1,5 @@
 import 'package:fluter_prjcts/Firestore/Player/current_player.dart';
+import 'package:fluter_prjcts/Screens/quiz.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Screens/waiting_room.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,8 @@ import 'package:go_router/go_router.dart';
 import 'package:fluter_prjcts/Pages/TopicSetup/question_list.page.dart';
 import 'package:fluter_prjcts/Screens/sign_in.screen.dart';
 import 'package:fluter_prjcts/Screens/sign_up.screen.dart';
+
+import '../Models/game.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -74,5 +77,16 @@ final GoRouter router = GoRouter(
         return WaitingRoomScreen(gameData : gameData);
       }
     ),
+    GoRoute(
+      path: "/quiz-solo",
+      builder: (context, state) {
+        final gameData = state.extra as Map<String, dynamic>;
+        Game gameSetup = Game.fromMap(gameData["game"]);
+        final hostId = gameData["hostId"];
+        final topicIds = gameData["topicIds"] as Set<String>;
+
+        return QuizScreen(configGame: gameSetup, gameTopicIds: topicIds, hostId: hostId);
+      }
+    )
   ],
 );

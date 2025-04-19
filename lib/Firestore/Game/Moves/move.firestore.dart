@@ -13,22 +13,24 @@ Future<void> makeMove(String gameId, String playerId, String questionId, String 
     "gameId": gameId,
     "playerId" : playerId,
     "questionId": questionId,
+    'answerId' : answerId,
     "isCorrect" : answer.isCorrect,
   });
 }
 
-Future<Move> getMove(String gameId, String playerId, String questionId) async {
+Future<List<Move>> getQuestionMoves(String gameId, String playerId, String questionId) async {
   final snapshot = await FirebaseFirestore.instance
       .collection("moves")
       .where("gameId", isEqualTo: gameId)
       .where("playerId", isEqualTo: playerId)
       .where("questionId", isEqualTo: questionId)
-      .limit(1)
       .get();
 
   if(snapshot.docs.isEmpty) throw Exception("Cant find the move");
 
-  final doc = snapshot.docs.first;
-
-  return Move.fromFirestore(doc);
+  List<Move> moves = [];
+  for(final doc in snapshot.docs) {
+    moves.add(Move.fromFirestore(doc));
+  }
+  return moves;
 }

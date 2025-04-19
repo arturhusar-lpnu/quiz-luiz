@@ -1,7 +1,10 @@
+import 'package:fluter_prjcts/Actions/Buttons/StartSoloGame/start-first-to.button.dart';
+import 'package:fluter_prjcts/Actions/Buttons/StartSoloGame/start-in-arow.button.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Widgets/Cards/match_card.dart';
 import 'package:fluter_prjcts/Models/match_details.dart';
-import 'package:fluter_prjcts/Actions/Buttons/practice_mode_buttons.dart';
+
+import '../../Actions/Buttons/StartSoloGame/start-death-run.button.dart';
 
 class SoloMode extends StatelessWidget{
   const SoloMode({super.key});
@@ -31,8 +34,7 @@ class SoloMode extends StatelessWidget{
                     width: 336,
                     height: 151,
                     headerBackColor: Color(0xFF1DC379),
-                    button: StartMatchWithAiButton(
-                      text: "Start",
+                    button: StartDeathRunSoloButton(
                       fontSize: 20,
                       width: 100,
                       height: 46,
@@ -50,8 +52,7 @@ class SoloMode extends StatelessWidget{
                     width: 336,
                     height: 151,
                     headerBackColor: Color(0xFF4F378A),
-                    button: RerunMistakesButton(
-                      text: "Start",
+                    button: StartFirstToSoloButton(
                       fontSize: 20,
                       width: 100,
                       height: 46,
@@ -69,8 +70,7 @@ class SoloMode extends StatelessWidget{
                     width: 336,
                     height: 151,
                     headerBackColor: Colors.amber,
-                    button: RerunMistakesButton(
-                      text: "Start",
+                    button: StartInArowSoloButton(
                       fontSize: 20,
                       width: 100,
                       height: 46,

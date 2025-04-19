@@ -50,7 +50,7 @@ class _GameTopicsPageState extends State<GameTopicsPage> {
 
   Future<void> fetchTopics() async {
     if (!initialLoadComplete) {
-      cachedTopics = await getTopics();
+      cachedTopics = await getAllTopics();
       initialLoadComplete = true;
     }
   }

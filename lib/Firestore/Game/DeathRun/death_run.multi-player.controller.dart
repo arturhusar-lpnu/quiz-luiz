@@ -1,4 +1,4 @@
-import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
+import 'package:fluter_prjcts/Firestore/Game/multi-player.firestore.dart';
 import 'package:fluter_prjcts/Firestore/Player/player.firestore.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 import 'package:fluter_prjcts/Models/question.dart';
@@ -6,8 +6,8 @@ import 'package:fluter_prjcts/Router/router.dart';
 
 import '../Moves/move.firestore.dart';
 
-class DeathRunController extends GameController {
-  DeathRunController({
+class DeathRunMultiPlayerController extends MultiPlayerController {
+  DeathRunMultiPlayerController({
     required super.gameSetup,
     required super.topicIds,
     required super.hostId,
@@ -99,23 +99,48 @@ class DeathRunController extends GameController {
   }
 
 
-
   Future checkAnswers() async {
-    final currQuestionId = await getCurrentQuestion();
+    final currQuestionId = await getCurrentQuestionId();
     final host = await _getHost();
     final opponent = await _getOpponent();
-    final hostMove = await getMove(gameSetup.id, host["id"], currQuestionId);
-    final oppMove = await getMove(gameSetup.id, opponent["id"], currQuestionId);
+    final hostMoves = await getQuestionMoves(gameSetup.id, host["id"], currQuestionId);
+    final oppMoves = await getQuestionMoves(gameSetup.id, opponent["id"], currQuestionId);
 
-    if(hostMove.isCorrect) {
+    int correctHostAnswers = 0;
+    int wrongHostAnswers = 0;
+
+    int correctOppAnswers = 0;
+    int wrongOppAnswers = 0;
+
+    for(final move in hostMoves) {
+      if(move.isCorrect) {
+        correctHostAnswers++;
+      } else {
+        wrongHostAnswers++;
+      }
+    }
+
+    for(final move in oppMoves) {
+      if(move.isCorrect) {
+        correctOppAnswers++;
+      } else {
+        wrongOppAnswers++;
+      }
+    }
+
+    if(correctHostAnswers > wrongHostAnswers) {
       await addPointToHost();
-    } else {
+    }
+
+    if(correctHostAnswers < wrongHostAnswers) {
       await addFailToHost();
     }
 
-    if(oppMove.isCorrect) {
+    if(correctOppAnswers > wrongOppAnswers) {
       await addPointToOpponent();
-    } else {
+    }
+
+    if(correctOppAnswers < wrongOppAnswers) {
       await addFailToOpponent();
     }
   }

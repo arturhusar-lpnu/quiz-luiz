@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:fluter_prjcts/Firestore/FCM/notification.firestore.dart';
+import 'package:fluter_prjcts/Firestore/Game/DeathRun/death_run.multi-player.controller.dart';
 import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
 import 'package:fluter_prjcts/Models/game_data.dart';
 import 'package:fluter_prjcts/Router/router.dart';
@@ -44,7 +45,7 @@ class FinalSetupState extends State<FinalSetupPage> {
   }
 
   Future<List<Topic>> fetchTopicsData(Set<String> topicIds) async {
-    List<Topic> topics =  await getTopics();
+    List<Topic> topics =  await getAllTopics();
     
     return topics.where((t) => topicIds.contains(t.id)).toList();
   }
@@ -67,9 +68,17 @@ class FinalSetupState extends State<FinalSetupPage> {
     return currPl;
   }
 
+
   Future<void> _addGame(GameData gameData) async {
     Game game = gameData.game;
-    GameController controller = GameController(
+    // switch(widget.selectedGameMode) {
+    //   case GameMode.death_run :
+    //     controller = DeathRunMultiPlayerController(gameSetup: game, topicIds: widget.selectedTopicsIds, hostId:  widget.currentUserId, opponentId: widget.selectedOpponentId)
+    //     break;
+    //   case GameMode.first_to_15 :
+    // }
+
+    GameController controller = DeathRunMultiPlayerController(
         gameSetup: game,
         topicIds: widget.selectedTopicsIds,
         hostId: widget.currentUserId,

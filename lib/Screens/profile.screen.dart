@@ -48,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
       data["ranked-player"] = rankedPlayer;
 
       /// Lists of all and solved topics
-      var totalTopics = await getTopics();
+      var totalTopics = await getAllTopics();
       var solvedTopics = await getSolvedTopics(currentPlayer.id);
 
       data['topics'] = { "all-topics" : totalTopics.length, "solved-topics": solvedTopics.length };

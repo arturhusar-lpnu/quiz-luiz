@@ -2,10 +2,10 @@ import "package:flutter/material.dart";
 
 import "../../Router/router.dart";
 
-void showResultDialog(BuildContext context, {
+Future<void> showResultDialog(BuildContext context, {
   required bool isCorrect,
   required pointsGainMessage //+1, 0, -1, -2
-}) {
+}) async {
   showDialog(
     context: context,
     barrierDismissible: true,

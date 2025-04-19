@@ -80,7 +80,7 @@ class AddQuestionState extends State<AddQuestionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -91,14 +91,14 @@ class AddQuestionState extends State<AddQuestionPage> {
                   Center(child: ScreenTitle(title: "New Question")),
                 ],
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               QuestionContentWidget(controller: _contentController),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               AnswerList(
                 answers: answers,
                 onAnswerChanged: _updateAnswer,
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               SaveTopicButton(
                 text: "Add question",
                 color: Color(0xFF6E3DDA),

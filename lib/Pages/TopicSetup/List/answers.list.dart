@@ -12,10 +12,11 @@ List<Color> answerCardsColors = [
 class AnswerList extends StatelessWidget {
   final List<Answer> answers;
   final Function(int index, Answer updateAnswe) onAnswerChanged;
+
   const AnswerList({
     super.key,
     required this.answers,
-    required this.onAnswerChanged,
+    required this.onAnswerChanged
   });
 
   List<Widget> _buildAnswerCards() {

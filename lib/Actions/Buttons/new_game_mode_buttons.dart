@@ -13,7 +13,6 @@ class SpectateGameButton extends ActionButton {
     onPressed: () {
       /// TODO Change to the proper screen
       router.push("/spectate-game");
-      //router.push("/joinGame");
     },
   );
 }
