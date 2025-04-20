@@ -66,3 +66,20 @@ Future<void> addToLeaderBoard(String playerId) async{
     "points" : 0,
   });
 }
+
+Future<void> addPoints(String playerId, points) async {
+  final snap = await FirebaseFirestore.instance
+      .collection("leaderboard")
+      .where(
+        "playerId",
+        isEqualTo: playerId
+      ).get();
+  if(snap.docs.isNotEmpty) {
+    final doc = snap.docs.first;
+    final currentPoints = doc['points'] ?? 0;
+
+    await doc.reference.update({
+      'points': currentPoints + points,
+    });
+  }
+}

@@ -26,7 +26,7 @@ Future<List<Move>> getQuestionMoves(String gameId, String playerId, String quest
       .where("questionId", isEqualTo: questionId)
       .get();
 
-  if(snapshot.docs.isEmpty) throw Exception("Cant find the move");
+  if(snapshot.docs.isEmpty) return [ ];
 
   List<Move> moves = [];
   for(final doc in snapshot.docs) {

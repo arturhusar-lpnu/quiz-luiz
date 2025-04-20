@@ -8,6 +8,7 @@ import "package:fluter_prjcts/Models/Enums/game_mode.enum.dart";
 import "package:fluter_prjcts/Models/answer.dart";
 import "package:fluter_prjcts/Models/question.dart";
 import "package:fluter_prjcts/Pages/QuizPage/quiz_answers_list.dart";
+import "package:fluter_prjcts/Router/router.dart";
 import "package:fluter_prjcts/Widgets/Other/screen_title.dart";
 import "package:fluter_prjcts/Widgets/PopUp/answer_result.popup.dart";
 import "package:flutter/material.dart";
@@ -128,6 +129,12 @@ class _QuizState extends State<QuizScreen> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _handleQuizResult(isCorrect: true, message: "+ 0 point. Too many options");
             });
+          } else if(state is QuizCompleted) {
+            router.go("/game-result", extra: {
+              "result" : state.result,
+              "score" : state.score,
+              "solvedTopics" : state.solvedTopics,
+            });
           }
           return Column(
             children: [
@@ -188,6 +195,7 @@ class _QuizState extends State<QuizScreen> {
             height: 90,
             onPressed: () async {
               quizBloc.add(AnswerSubmitted(selectedAnswers, q.id ));
+              selectedAnswers = [];
             },
           ),
         ],

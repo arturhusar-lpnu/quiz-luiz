@@ -1,4 +1,5 @@
 import 'package:fluter_prjcts/Firestore/Player/current_player.dart';
+import 'package:fluter_prjcts/Screens/game_result.screen.dart';
 import 'package:fluter_prjcts/Screens/quiz.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Screens/waiting_room.screen.dart';
@@ -87,6 +88,18 @@ final GoRouter router = GoRouter(
 
         return QuizScreen(configGame: gameSetup, gameTopicIds: topicIds, hostId: hostId);
       }
-    )
+    ),
+    GoRoute(
+      path: '/game-result',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        return GameResultScreen(
+          result: extras['result'],
+          score: extras['score'],
+          host: CurrentPlayer.player!,
+          solvedTopics: extras['solvedTopics'],
+        );
+      },
+    ),
   ],
 );

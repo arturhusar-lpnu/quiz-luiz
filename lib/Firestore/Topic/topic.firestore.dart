@@ -65,7 +65,14 @@ Future<List<Topic>> getSolvedTopics(String playerId) async {
       .collection('solved-topics')
       .where('playerId', isEqualTo: playerId)
       .get();
-  return snapshot.docs.map((doc) => Topic.fromFirestore(doc)).toList();
+  if(snapshot.docs.isEmpty) return [];
+  List<Topic> topics = [];
+
+  for(final doc in snapshot.docs) {
+    final topicId = doc["topicId"];
+    topics.add(await getTopic(topicId));
+  }
+  return topics;
 }
 
 Future<List<Topic>> getUnsolvedTopics(String playerId) async {
@@ -75,4 +82,15 @@ Future<List<Topic>> getUnsolvedTopics(String playerId) async {
   final solvedIds = solved.map((t) => t.id).toSet();
 
   return allTopics.where((topic) => !solvedIds.contains(topic.id)).toList();
+}
+
+Future<void> addSolvedTopics(String playerId, List<String> topicIds) async {
+  for(final topicId in topicIds) {
+    await FirebaseFirestore.instance
+        .collection('solved-topics')
+        .add({
+      "playerId" : playerId,
+      "topicId" : topicId
+    });
+  }
 }

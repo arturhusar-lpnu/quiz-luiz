@@ -4,6 +4,7 @@ import "package:fluter_prjcts/Firestore/Question/question.firestore.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:fluter_prjcts/Models/question.dart";
 import "package:fluter_prjcts/Models/answer.dart";
+import "package:fluter_prjcts/Models/topic.dart";
 part "quiz.state.dart";
 part "quiz.event.dart";
 
@@ -21,7 +22,16 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     try {
       await controller.roundSetup();
 
-      if(controller.isGameOver()) throw Exception("Game Over");
+      if(controller.isGameOver()) {
+        final gameResult = controller.getGameResult();
+        if(gameResult == "Win") {
+          await controller.addPointsToRanked();
+        }
+
+        //await addSolvedTopics(controller.hostId, controller.solvedTopicIds);
+        add(EndQuiz(gameResult));
+        return;
+      }
 
       String id = await controller.getCurrentQuestionId();
 
@@ -33,7 +43,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
       emit(QuizQuestionLoaded(question, questionAnswers, score));
     } catch(e) {
-      emit(QuizCompleted(e.toString()));
+      add(EndQuiz(e.toString()));
     }
   }
 
@@ -55,16 +65,14 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       } else {
         emit(QuizAnswered());
       }
-
-      if(controller.isGameOver()) {
-        add(EndQuiz(controller.getGameResult()));
-      }
     } catch(_) {
 
     }
   }
 
-  void _endQuizHandler(EndQuiz e, Emitter emit) {
-    emit(QuizCompleted(e.result));
+  Future<void> _endQuizHandler(EndQuiz e, Emitter emit) async{
+    final solvedTopics = await controller.getSolvedTopics();
+    final score = await controller.getScore();
+    emit(QuizCompleted(e.result, score, solvedTopics));
   }
 }

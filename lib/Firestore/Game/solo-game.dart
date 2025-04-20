@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
+import 'package:fluter_prjcts/Firestore/LeaderBoard/leaderboard.firestore.dart';
+
+import '../../Models/topic.dart';
 
 abstract class SoloGameController extends GameController {
   final String hostId;
   late String gameResult;
+  List<String> solvedTopicIds = [];
   SoloGameController({
     required super.gameSetup,
     required super.topicIds,
@@ -19,6 +23,8 @@ abstract class SoloGameController extends GameController {
   int getQuestionsCount();
 
   Future<String> getScore();
+
+  Future<List<Topic>> getSolvedTopics();
 
   @override
   Future<void> newGame() async {
@@ -53,6 +59,12 @@ abstract class SoloGameController extends GameController {
     await gameDocRef.update({
       'host.score': FieldValue.increment(1),
     });
+  }
+
+  Future addPointsToRanked () async {
+    final host = await getHostInfo();
+    final points = host["score"] as int;
+    await addPoints(hostId, points);
   }
 
   Future addFailToHost() async {

@@ -1,7 +1,7 @@
 import 'package:fluter_prjcts/Firestore/Game/solo-game.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 import 'package:fluter_prjcts/Models/question.dart';
-import 'package:fluter_prjcts/Router/router.dart';
+import '../../../Models/topic.dart';
 import '../Moves/move.firestore.dart';
 import "dart:math";
 
@@ -16,7 +16,6 @@ class InArowToSoloController extends SoloGameController {
   int consCorrect = 0;
   Map<String, List<Question>> gameQuestions = {};
 
-  List<String> solvedTopics = [];
 
   Map<String, dynamic> host = {};
 
@@ -50,7 +49,8 @@ class InArowToSoloController extends SoloGameController {
       final questions = gameQuestions[topicId];
 
       if (questions == null || questions.isEmpty) {
-        solvedTopics.add(topicId);
+        solvedTopicIds.add(topicId);
+        gameQuestions.remove(topicId);
       } else {
         final randomIndex = random.nextInt(questions.length);
         return questions.removeAt(randomIndex);
@@ -74,6 +74,15 @@ class InArowToSoloController extends SoloGameController {
     score.write("Score: ${hostInfo["score"]}");
 
     return score.toString();
+  }
+
+  @override
+  Future<List<Topic>> getSolvedTopics() async {
+    List<Topic> topics = [];
+    for(final soledTopicId in solvedTopicIds) {
+      topics.add(await getTopic(soledTopicId));
+    }
+    return topics;
   }
 
   @override
@@ -136,15 +145,15 @@ class InArowToSoloController extends SoloGameController {
 
     gameOver();
     gameResult = result;
-
-    if(result == "Loss") {
-      router.push("/loss", extra: { gameSetup, hostId });
-      return;
-    }
-
-    if(result == "Win") {
-      router.push("/win", extra: { gameSetup, hostId, solvedTopics });
-      return;
-    }
+    //
+    // if(result == "Loss") {
+    //   router.push("/loss", extra: { gameSetup, hostId });
+    //   return;
+    // }
+    //
+    // if(result == "Win") {
+    //   router.push("/win", extra: { gameSetup, hostId, solvedTopics });
+    //   return;
+    // }
   }
 }

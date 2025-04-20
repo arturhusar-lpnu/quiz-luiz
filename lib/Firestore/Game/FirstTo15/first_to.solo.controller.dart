@@ -1,9 +1,8 @@
 import 'dart:math';
-
 import 'package:fluter_prjcts/Firestore/Game/solo-game.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 import 'package:fluter_prjcts/Models/question.dart';
-import 'package:fluter_prjcts/Router/router.dart';
+import '../../../Models/topic.dart';
 import '../Moves/move.firestore.dart';
 
 class FirstToSoloController extends SoloGameController {
@@ -16,8 +15,6 @@ class FirstToSoloController extends SoloGameController {
   });
 
   Map<String, List<Question>> gameQuestions = {};
-
-  List<String> solvedTopics = [];
 
   Map<String, dynamic> host = {};
 
@@ -49,7 +46,8 @@ class FirstToSoloController extends SoloGameController {
       final questions = gameQuestions[topicId];
 
       if (questions == null || questions.isEmpty) {
-        solvedTopics.add(topicId);
+        solvedTopicIds.add(topicId);
+        gameQuestions.remove(topicId);
       } else {
         int index = random.nextInt(questions.length);
         return questions.removeAt(index);
@@ -65,6 +63,14 @@ class FirstToSoloController extends SoloGameController {
     return host;
   }
 
+  @override
+  Future<List<Topic>> getSolvedTopics() async {
+    List<Topic> topics = [];
+    for(final soledTopicId in solvedTopicIds) {
+      topics.add(await getTopic(soledTopicId));
+    }
+    return topics;
+  }
   @override
   Future<String> getScore() async{
     final hostInfo = await _getHost();
@@ -131,17 +137,16 @@ class FirstToSoloController extends SoloGameController {
   }
 
   Future endGame(String result) async{
-
     gameOver();
     gameResult = result;
-    if(result == "Loss") {
-      router.push("/loss", extra: { gameSetup, hostId });
-      return;
-    }
-
-    if(result == "Win") {
-      router.push("/win", extra: { gameSetup, hostId, solvedTopics });
-      return;
-    }
+    // if(result == "Loss") {
+    //   router.push("/loss", extra: { gameSetup, hostId });
+    //   return;
+    // }
+    //
+    // if(result == "Win") {
+    //   router.push("/win", extra: { gameSetup, hostId, solvedTopicIds });
+    //   return;
+    // }
   }
 }

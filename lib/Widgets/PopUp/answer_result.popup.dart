@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-
 import "../../Router/router.dart";
 
 Future<void> showResultDialog(BuildContext context, {
@@ -57,6 +56,7 @@ class _ResultPopup extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: Colors.black
               ),
             ),
           ),
@@ -64,7 +64,7 @@ class _ResultPopup extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
           decoration: const BoxDecoration(
-            color: Colors.black,
+            color: Color(0xFF30323d),
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20),

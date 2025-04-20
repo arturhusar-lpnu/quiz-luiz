@@ -26,5 +26,7 @@ class QuizAnswered extends QuizState {
 
 class QuizCompleted extends QuizState {
   final String result;
-  QuizCompleted(this.result);
+  final String score;
+  final List<Topic> solvedTopics;
+  QuizCompleted(this.result, this.score, this.solvedTopics);
 }

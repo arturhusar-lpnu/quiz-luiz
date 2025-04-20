@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:fluter_prjcts/Firestore/Game/solo-game.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 import 'package:fluter_prjcts/Models/question.dart';
-import 'package:fluter_prjcts/Router/router.dart';
-import '../Moves/move.firestore.dart';
+import 'package:fluter_prjcts/Models/topic.dart';
+import 'package:fluter_prjcts/Firestore/Game/Moves/move.firestore.dart';
 
 class DeathRunSoloPlayerController extends SoloGameController {
   DeathRunSoloPlayerController({
@@ -15,12 +15,10 @@ class DeathRunSoloPlayerController extends SoloGameController {
 
   Map<String, List<Question>> gameQuestions = {};
 
-  List<String> solvedTopics = [];
-
   Map<String, dynamic> host = {};
 
   late String result;
-
+  late String currentTopicId;
 
   Future<void> _setupQuestions() async{
     for(final topicId in topicIds) {
@@ -45,20 +43,51 @@ class DeathRunSoloPlayerController extends SoloGameController {
     await _setupQuestions();
   }
 
+  // Question getQuestion() {
+  //   final random = Random();
+  //
+  //   if (gameQuestions.isEmpty) {
+  //     throw Exception('No questions available in any topic.');
+  //   }
+  //
+  //   final topicIds = gameQuestions.keys.toList();
+  //   final randomTopicId = topicIds[random.nextInt(topicIds.length)];
+  //   final questions = gameQuestions[randomTopicId]!;
+  //
+  //   if (questions.isEmpty) {
+  //     solvedTopicIds.add(randomTopicId);
+  //     gameQuestions.remove(randomTopicId);
+  //     return getQuestion();
+  //   }
+  //
+  //   final question = questions.removeAt(random.nextInt(questions.length));
+  //   if (questions.isEmpty) {
+  //     solvedTopicIds.add(randomTopicId);
+  //     gameQuestions.remove(randomTopicId);
+  //   }
+  //
+  //   return question;
+  // }
   Question getQuestion() {
     final random = Random();
-    for (final topicId in topicIds) {
-      final questions = gameQuestions[topicId];
 
-      if (questions == null || questions.isEmpty) {
-        solvedTopics.add(topicId);
-      } else {
-        int index = random.nextInt(questions.length);
-        return questions.removeAt(index);
-      }
+    if (gameQuestions.isEmpty) {
+      throw Exception('No questions available in any topic.');
     }
 
-    throw Exception('No questions available in any topic.');
+    final topicIds = gameQuestions.keys.toList();
+    final randomTopicId = topicIds[random.nextInt(topicIds.length)];
+    final questions = gameQuestions[randomTopicId]!;
+
+    if (questions.isEmpty) {
+      gameQuestions.remove(randomTopicId);
+      return getQuestion(); // retry with another topic
+    }
+
+    currentTopicId = randomTopicId; // Track current topic
+
+    final question = questions.removeAt(random.nextInt(questions.length));
+    return question;
   }
 
   Future _getHost() async {
@@ -78,6 +107,23 @@ class DeathRunSoloPlayerController extends SoloGameController {
     return score.toString();
   }
 
+  Future<bool> _isTopicSolved(String topicId, String hostId) async {
+    final topicQuestions = await getTopicQuestions(topicId);
+
+    for (final q in topicQuestions) {
+      final moves = await getQuestionMoves(gameSetup.id, hostId, q.id);
+      final correct = moves.where((m) => m.isCorrect).length;
+      final wrong = moves.where((m) => !m.isCorrect).length;
+      if (correct <= wrong) {
+        return false;
+      }
+    }
+
+    await addSolvedTopics(hostId, [topicId]);
+
+    return true;
+  }
+
   @override
   Future roundSetup() async {
     final host = await _getHost();
@@ -87,11 +133,29 @@ class DeathRunSoloPlayerController extends SoloGameController {
     }
 
     try {
-      Question currentQuestion = getQuestion();
-      await updateCurrentQuestion(currentQuestion.id);
-    } catch (exception) {
+      final question = getQuestion();
+      await updateCurrentQuestion(question.id);
+
+      // Check if current topic is depleted
+      // if (gameQuestions[currentTopicId]!.isEmpty) {
+      //   final isSolved = await _isTopicSolved(currentTopicId, host["id"]);
+      //   if (isSolved) {
+      //     solvedTopicIds.add(currentTopicId);
+      //   }
+      //   gameQuestions.remove(currentTopicId);
+      // }
+
+    } catch (e) {
       endGame("Win");
     }
+
+
+    // try {
+    //   Question currentQuestion = getQuestion();
+    //   await updateCurrentQuestion(currentQuestion.id);
+    // } catch (exception) {
+    //   endGame("Win");
+    // }
   }
 
   @override
@@ -122,21 +186,39 @@ class DeathRunSoloPlayerController extends SoloGameController {
       result = "False";
     }
 
+    if (gameQuestions.containsKey(currentTopicId) &&
+        gameQuestions[currentTopicId]!.isEmpty) {
+      final isSolved = await _isTopicSolved(currentTopicId, host["id"]);
+      if (isSolved) {
+        solvedTopicIds.add(currentTopicId);
+      }
+      gameQuestions.remove(currentTopicId);
+    }
 
     return result;
   }
 
+  @override
+  Future<List<Topic>> getSolvedTopics() async {
+    List<Topic> topics = [];
+    for(final soledTopicId in solvedTopicIds) {
+      topics.add(await getTopic(soledTopicId));
+    }
+    return topics;
+  }
+
+
   Future endGame(String result) async{
     gameOver();
     gameResult = result;
-    if(result == "Loss") {
-      router.push("/loss", extra: { gameSetup, hostId });
-      return;
-    }
-
-    if(result == "Win") {
-      router.push("/win", extra: { gameSetup, hostId, solvedTopics });
-      return;
-    }
+    // if(result == "Loss") {
+    //   router.push("/loss", extra: { gameSetup, hostId });
+    //   return;
+    // }
+    //
+    // if(result == "Win") {
+    //   router.push("/win", extra: { gameSetup, hostId, solvedTopicIds });
+    //   return;
+    // }
   }
 }
