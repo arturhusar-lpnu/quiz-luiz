@@ -233,7 +233,7 @@ class _QuizState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: _isInitialized ? _buildMainContent(context) : const Center(child: CircularProgressIndicator()),
+      body: _isInitialized ? _buildMainContent(context) : const Center(child: Column(children: [CircularProgressIndicator(), Text("Initializing the game")],)),
     );
   }
 
