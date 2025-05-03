@@ -8,14 +8,17 @@ import "package:flutter/material.dart";
 import "package:fluter_prjcts/Models/player.dart";
 import "package:fluter_prjcts/Firestore/Player/player.firestore.dart";
 import "package:fluter_prjcts/Router/router.dart";
-
 import "../Firestore/LeaderBoard/leaderboard.firestore.dart";
 import "../Firestore/Streak/streak.firestore.dart";
 import "../Firestore/Topic/topic.firestore.dart";
 import "../Pages/Profile/player_profile_data.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final LeaderBoardRepository leaderRepo = LeaderBoardRepository(firestore: FirebaseFirestore.instance);
+
+  ProfileScreen({super.key});
 
   Future<Player> _getCurrentPlayer() async {
     final currPlayer = await getCurrentPlayer();
@@ -44,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
       data["streak"] = streakDays;
 
       ///Player ranked records
-      final RankedPlayer rankedPlayer = await fetchRankedPlayer(currentPlayer.id);
+      final RankedPlayer rankedPlayer = await leaderRepo.fetchRankedPlayer(currentPlayer.id);
       data["ranked-player"] = rankedPlayer;
 
       /// Lists of all and solved topics

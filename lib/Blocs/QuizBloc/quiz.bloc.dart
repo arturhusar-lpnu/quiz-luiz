@@ -1,6 +1,6 @@
-import "package:fluter_prjcts/Firestore/Game/Moves/move.firestore.dart";
+import "package:fluter_prjcts/Firestore/Game/Moves/move.repository.dart";
 import "package:fluter_prjcts/Firestore/Game/solo-game.dart";
-import "package:fluter_prjcts/Firestore/Question/question.firestore.dart";
+import "package:fluter_prjcts/Firestore/Question/question.repository.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:fluter_prjcts/Models/question.dart";
 import "package:fluter_prjcts/Models/answer.dart";
@@ -11,8 +11,10 @@ part "quiz.event.dart";
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
   late SoloGameController controller;
+  final QuestionRepository questionRepo;
+  final MoveRepository moveRepo;
 
-  QuizBloc({required this.controller}): super(QuizInitState()) {
+  QuizBloc({required this.controller, required this.questionRepo, required this.moveRepo}): super(QuizInitState()) {
     on<LoadNextQuestion>(_loadQuestionHandler);
     on<AnswerSubmitted>(_submittedAnswerHandler);
     on<EndQuiz>(_endQuizHandler);
@@ -35,9 +37,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
       String id = await controller.getCurrentQuestionId();
 
-      Question question = await getQuestion(id);
+      Question question = await questionRepo.getQuestion(id);
 
-      List<Answer> questionAnswers = await getAnswers(id);
+      List<Answer> questionAnswers = await questionRepo.getAnswers(id);
 
       String score = await controller.getScore();
 
@@ -53,7 +55,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       final questionId = e.questionId;
 
       for(final answer in answers) {
-        await makeMove(controller.gameSetup.id, controller.hostId, questionId, answer.id);
+        await moveRepo.makeMove(controller.gameSetup.id, controller.hostId, questionId, answer.id);
       }
 
       String result = await controller.checkAnswers();
@@ -65,9 +67,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       } else {
         emit(QuizAnswered());
       }
-    } catch(_) {
-
-    }
+    } catch(e) { print(e); }
   }
 
   Future<void> _endQuizHandler(EndQuiz e, Emitter emit) async{

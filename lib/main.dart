@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluter_prjcts/Blocs/LeaderboardBLoC/leaderboard_bloc.dart';
 import 'package:fluter_prjcts/Blocs/RecentTopicsBloc/recent_topics_bloc.dart';
+import 'package:fluter_prjcts/Blocs/StreakBloc/streak_bloc.dart';
+import 'package:fluter_prjcts/Firestore/LeaderBoard/leaderboard.firestore.dart';
 import 'package:fluter_prjcts/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +47,12 @@ void main() async{
             ),
             BlocProvider(
               create: (context) => RecentTopicsBloc(firestore: firestore),
+            ),
+            BlocProvider(
+              create: (context) => StreakBloc(),
+            ),
+            BlocProvider(
+              create: (context) => LeaderBoardBloc(leaderRepo: LeaderBoardRepository(firestore: firestore)),
             ),
             // BlocProvider(
             //   create: (context) => QuestionBloc(firestore: firestore),

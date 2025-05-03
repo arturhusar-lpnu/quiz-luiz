@@ -13,7 +13,6 @@ void receiveNotificationsInit() {
 
 void setupForeground() {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("Foreground message received");
     if (message.notification != null) {
       final gameDataMap = jsonDecode(message.data["gameData"]);
       final gameData = GameData.fromMap(gameDataMap);
@@ -25,7 +24,6 @@ void setupForeground() {
 
 void setupOpenedApp() {
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print("Opened App message received");
     if (message.notification != null) {
       final gameDataMap = jsonDecode(message.data["gameData"]);
       final gameData = GameData.fromMap(gameDataMap);
@@ -41,7 +39,6 @@ void setupBackGround() {
 
 @pragma('vm:entry-point')
 Future<void> _handleBackgroundMessage(RemoteMessage message) async {
-  print("Background message received");
   if (message.notification != null) {
     final gameDataMap = jsonDecode(message.data["gameData"]);
     final gameData = GameData.fromMap(gameDataMap);

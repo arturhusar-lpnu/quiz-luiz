@@ -78,8 +78,10 @@ class MatchCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 20,),
-                  button
+
+                  Flexible(
+                    child: button,  // Button will take up remaining space
+                  ),
                 ],
               ),
             ],

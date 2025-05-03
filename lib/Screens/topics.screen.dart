@@ -107,16 +107,6 @@ class _TopicsState extends State<TopicsScreen> {
               child: const Icon(Icons.add, color: Colors.white, size: 28
               ),
             ),
-            // FloatingActionButton.extended(
-            //   onPressed: _addTopic,
-            //   backgroundColor: const Color(0xFF6E3DDA),
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(30),
-            //   ),
-            //   label: const Text('Add Topic'),
-            //   icon: const Icon(Icons.add, color: Colors.white, size: 28
-            //   ),
-            // ),
           )
         ],
         ),

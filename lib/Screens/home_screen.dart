@@ -1,9 +1,5 @@
 import 'package:fluter_prjcts/Actions/Buttons/play_button.dart';
-import 'package:fluter_prjcts/Screens/loading_screen.dart';
 import 'package:flutter/material.dart';
-import '../Firestore/Player/player.firestore.dart';
-import '../Firestore/Streak/streak.firestore.dart';
-import '../Router/router.dart';
 import '../Widgets/LeaderBoard/short_leaderboard.dart';
 import "../Widgets/Other/streak_widget.dart";
 import '../Widgets/Topics/recent_topics.dart';
@@ -12,16 +8,7 @@ import '../Widgets/Other/screen_title.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Future<int> _fetchStreak() async {
-    final currPlayer = await getCurrentPlayer();
-    if (currPlayer == null) {
-      router.push("/sign-in");
-      throw Exception("Sign In first");
-    }
-    return await getStreak(currPlayer.id);
-  }
-
-  Widget buildContent(BuildContext context, int streak) {
+  Widget buildContent(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -38,7 +25,6 @@ class HomeScreen extends StatelessWidget {
 
             const RecentTopicsWidget(),
 
-            //LeaderBoard
             const SizedBox(height: 20),
             const LeaderboardWidget(),
 
@@ -61,12 +47,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingScreen(
-        future: _fetchStreak,
-        builder: buildContent,
-        loadingText: "Loading",
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor
-    );
+    return buildContent(context);
   }
 }
-

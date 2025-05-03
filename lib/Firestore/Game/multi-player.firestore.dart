@@ -10,6 +10,7 @@ class MultiPlayerController extends GameController {
     required super.topicIds,
     required this.hostId,
     required this.opponentId,
+    required super.firestore
   });
 
   @override

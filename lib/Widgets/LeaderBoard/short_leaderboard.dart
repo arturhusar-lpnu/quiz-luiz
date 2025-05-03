@@ -7,7 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import './leaderboard_entry.dart';
 
 class LeaderboardWidget extends StatefulWidget {
-  const LeaderboardWidget({super.key});
+  final LeaderBoardBloc? bloc;
+  const LeaderboardWidget({super.key, this.bloc});
 
   @override
   State<StatefulWidget> createState() => _LeaderBoardState();
@@ -20,13 +21,12 @@ class _LeaderBoardState extends State<LeaderboardWidget> {
   @override
   void initState() {
     super.initState();
-    lbBloc = LeaderBoardBloc();
+    lbBloc = widget.bloc ?? context.read<LeaderBoardBloc>();
     lbBloc.add(SubscribeLeaderBoardEvent());
   }
 
   @override
   void dispose() {
-    lbBloc.close();
     super.dispose();
   }
 
@@ -44,7 +44,6 @@ class _LeaderBoardState extends State<LeaderboardWidget> {
 
   (List<RankedPlayer>, RankedPlayer, List<RankedPlayer>) fetchData(List<RankedPlayer> players) {
     List<RankedPlayer> top = [];
-
     if(players.length >= 3) {
       top.add(players[0]);
       top.add(players[1]);
@@ -53,9 +52,8 @@ class _LeaderBoardState extends State<LeaderboardWidget> {
 
     final currentPlayer = players.where((pl) => pl.playerId == CurrentPlayer.player!.id).first;
 
-    players.removeWhere((pl) => pl.playerId == currentPlayer.playerId);
-
-    return ( top, currentPlayer, players );
+    final p = players.where((pl) => pl.playerId != currentPlayer.playerId).toList();
+    return ( top, currentPlayer, p );
   }
 
 

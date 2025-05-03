@@ -13,15 +13,9 @@ class SoloMode extends StatelessWidget{
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(16),
-        // decoration: BoxDecoration(
-        //   color: const Color(0xFF3A3D4D),
-        //   borderRadius: BorderRadius.circular(12),
-        // ),
+
         child: ListView(
           children: [
-            // const Center(
-            //   child: Text("Solo", style: TextStyle(fontSize: 24, color: Colors.amber)),
-            // ),
             const SizedBox(height: 20,),
             Column(
               children: [

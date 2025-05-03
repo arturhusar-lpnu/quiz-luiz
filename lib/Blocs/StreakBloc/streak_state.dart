@@ -11,6 +11,8 @@ class SubscribedStreak extends StreakState {
   SubscribedStreak(this.playerId);
 }
 
+class StreakLoading extends StreakState{}
+
 class StreakLoadSuccess extends StreakState {
   int streak;
   StreakLoadSuccess(this.streak);

@@ -6,6 +6,7 @@ abstract class LeaderBoardState {
 
 class LeaderBoardInitial extends LeaderBoardState {}
 
+class LeaderBoardLoading extends LeaderBoardState {}
 
 class LeaderBoardLoadSuccess extends LeaderBoardState{
   List<RankedPlayer> rankedPlayers;

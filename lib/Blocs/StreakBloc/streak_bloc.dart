@@ -16,6 +16,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
   }
 
   void _streakSubscribeHandler(SubscribeStreakEvent e, Emitter emit) {
+    emit(StreakLoading());
     subscription?.cancel();
     subscription = listenForStreak().listen(
           (streak) => add(UpdatedStreakEvent(streak)),

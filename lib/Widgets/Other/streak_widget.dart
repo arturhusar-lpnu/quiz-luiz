@@ -1,5 +1,6 @@
 import 'package:fluter_prjcts/Blocs/StreakBloc/streak_bloc.dart';
 import 'package:fluter_prjcts/Firestore/Player/current_player.dart';
+import 'package:fluter_prjcts/context_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluter_prjcts/Widgets/PopUp/error.popup.dart';
@@ -19,13 +20,13 @@ class _StreakState extends State<StreakWidget> {
   void initState() {
     super.initState();
     final currentPlayer = CurrentPlayer.player;
-    sBloc = StreakBloc();
+    sBloc = context.maybeRead<StreakBloc>() ?? StreakBloc();
     sBloc.add(SubscribeStreakEvent(currentPlayer!.id));
   }
 
   @override
   void dispose() {
-    sBloc.close();
+    //sBloc.close();
     super.dispose();
   }
 

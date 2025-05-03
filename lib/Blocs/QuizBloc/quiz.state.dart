@@ -11,6 +11,8 @@ class QuizLoaded extends QuizState {
 
 class QuizAnsweredCorrect extends QuizState {}
 
+class QuizQuestionLoading extends QuizState {}
+
 class QuizQuestionLoaded extends QuizState {
   Question currentQuestion;
   List<Answer> answers;

@@ -1,8 +1,6 @@
 import 'package:fluter_prjcts/Firestore/Game/solo-game.dart';
-import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 import 'package:fluter_prjcts/Models/question.dart';
 import '../../../Models/topic.dart';
-import '../Moves/move.firestore.dart';
 import "dart:math";
 
 class InArowToSoloController extends SoloGameController {
@@ -11,7 +9,9 @@ class InArowToSoloController extends SoloGameController {
     required super.gameSetup,
     required super.topicIds,
     required super.hostId,
-    required this.pointsToWin
+    required this.pointsToWin,
+    required super.movesRepository,
+    required super.topicRepository, required super.firestore, required super.leaderBoardRepository,
   });
   int consCorrect = 0;
   Map<String, List<Question>> gameQuestions = {};
@@ -25,7 +25,7 @@ class InArowToSoloController extends SoloGameController {
     int questionsCount = 0;
 
     for(final topicId in topicIds) {
-      final questions = await getTopicQuestions(topicId);
+      final questions = await topicRepository.getTopicQuestions(topicId);
       gameQuestions[topicId] = questions;
       questionsCount += questions.length;
     }
@@ -80,7 +80,7 @@ class InArowToSoloController extends SoloGameController {
   Future<List<Topic>> getSolvedTopics() async {
     List<Topic> topics = [];
     for(final soledTopicId in solvedTopicIds) {
-      topics.add(await getTopic(soledTopicId));
+      topics.add(await topicRepository.getTopic(soledTopicId));
     }
     return topics;
   }
@@ -112,7 +112,7 @@ class InArowToSoloController extends SoloGameController {
   Future<String> checkAnswers() async {
     final currQuestionId = await getCurrentQuestionId();
     final host = await _getHost();
-    final hostMoves = await getQuestionMoves(gameSetup.id, host["id"], currQuestionId);
+    final hostMoves = await movesRepository.getQuestionMoves(gameSetup.id, host["id"], currQuestionId);
     int correctAnswers = 0;
     int wrongAnswers = 0;
 

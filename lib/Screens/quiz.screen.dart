@@ -1,9 +1,14 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:fluter_prjcts/Actions/Buttons/action_button.dart";
 import "package:fluter_prjcts/Blocs/QuizBloc/quiz.bloc.dart";
 import "package:fluter_prjcts/Firestore/Game/DeathRun/death_run.solo.controller.dart";
 import "package:fluter_prjcts/Firestore/Game/FirstTo15/first_to.solo.controller.dart";
 import "package:fluter_prjcts/Firestore/Game/In_a_row/in_arow.solo.controller.dart";
+import "package:fluter_prjcts/Firestore/Game/Moves/move.repository.dart";
 import "package:fluter_prjcts/Firestore/Game/solo-game.dart";
+import "package:fluter_prjcts/Firestore/LeaderBoard/leaderboard.firestore.dart";
+import "package:fluter_prjcts/Firestore/Question/question.repository.dart";
+import "package:fluter_prjcts/Firestore/Topic/topic.repository.dart";
 import "package:fluter_prjcts/Models/Enums/game_mode.enum.dart";
 import "package:fluter_prjcts/Models/answer.dart";
 import "package:fluter_prjcts/Models/question.dart";
@@ -39,29 +44,43 @@ class _QuizState extends State<QuizScreen> {
     final game = widget.configGame;
     final topicIds = widget.gameTopicIds;
     final hostId = widget.hostId;
-
+    final firestoreInstance = FirebaseFirestore.instance;
+    final topicRepository = TopicRepository(firestore: firestoreInstance);
+    final moveRepository = MoveRepository(firestore: firestoreInstance);
+    final lRepo = LeaderBoardRepository(firestore: firestoreInstance);
     switch (game.mode) {
       case GameMode.death_run:
         gameController = DeathRunSoloPlayerController(
+          firestore: FirebaseFirestore.instance,
           gameSetup: game,
           topicIds: topicIds,
           hostId: hostId,
+          topicRepository: topicRepository,
+          movesRepository: moveRepository, leaderBoardRepository: lRepo,
         );
         break;
       case GameMode.first_to_15:
         gameController = FirstToSoloController(
+          firestore: FirebaseFirestore.instance,
           gameSetup: game,
           topicIds: topicIds,
           hostId: hostId,
           pointsToWin: 15,
+          topicRepository: topicRepository,
+          movesRepository: moveRepository,
+            leaderBoardRepository: lRepo
         );
         break;
       case GameMode.in_a_row:
         gameController = InArowToSoloController(
+          firestore: FirebaseFirestore.instance,
           gameSetup: game,
           topicIds: topicIds,
           hostId: hostId,
           pointsToWin: 5,
+          topicRepository: topicRepository,
+          movesRepository: moveRepository,
+            leaderBoardRepository: lRepo
         );
         break;
     }
@@ -69,7 +88,10 @@ class _QuizState extends State<QuizScreen> {
     await gameController.init();
 
     setState(() {
-      quizBloc = QuizBloc(controller: gameController);
+      final firestore = FirebaseFirestore.instance;
+      final questionRepo = QuestionRepository(firestore: firestore);
+      final movesRepo = MoveRepository(firestore: firestore);
+      quizBloc = QuizBloc(controller: gameController, questionRepo: questionRepo, moveRepo: movesRepo);
       quizBloc.add(LoadNextQuestion());
       _isInitialized = true;
     });

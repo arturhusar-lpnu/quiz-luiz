@@ -25,26 +25,33 @@ class LoadingScreen<T> extends StatelessWidget {
               color: backgroundColor,
               padding: EdgeInsets.all(16),
               child: Center(
-                  child: Column(
-                    children: [
-                      CircularProgressIndicator(
-                        backgroundColor: Color(0xFF4D5061),
-                        color: Colors.white,
-                      ),
-                      SizedBox(height: 10,),
-                      Text(
-                        loadingText,
-                        style: TextStyle(
-                          color: backgroundColor,
-                          fontSize: 16,
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.9,
+                      maxHeight: MediaQuery.of(context).size.height * 0.6,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          backgroundColor: Color(0xFF4D5061),
+                          color: Colors.white,
                         ),
-                      )
-                    ],
-                  )
-
+                        SizedBox(height: 10),
+                        Text(
+                          loadingText,
+                          style: TextStyle(
+                            color: backgroundColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            )
-
+            ),
           );
         } else if (snapshot.hasError) {
           return Scaffold(

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluter_prjcts/Blocs/QuestionBloc/question_bloc.dart';
+import 'package:fluter_prjcts/Firestore/Question/question.repository.dart';
+import 'package:fluter_prjcts/context_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,8 +34,7 @@ class _SimpleTopicCardState extends State<SimpleTopicCard> {
   @override
   void initState() {
     super.initState();
-    final firestore = FirebaseFirestore.instance;
-    qBloc = QuestionBloc(firestore: firestore);
+    qBloc = context.maybeRead<QuestionBloc>() ?? QuestionBloc(repository:  QuestionRepository(firestore: FirebaseFirestore.instance));
     qBloc.add(SubscribeQuestions(widget.topic.id));
   }
 

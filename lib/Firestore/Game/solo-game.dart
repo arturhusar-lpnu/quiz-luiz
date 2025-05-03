@@ -1,17 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluter_prjcts/Firestore/Game/Moves/move.repository.dart';
 import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
 import 'package:fluter_prjcts/Firestore/LeaderBoard/leaderboard.firestore.dart';
+import 'package:fluter_prjcts/Firestore/Topic/topic.repository.dart';
 
 import '../../Models/topic.dart';
 
 abstract class SoloGameController extends GameController {
+  final TopicRepository topicRepository;
+  final MoveRepository movesRepository;
+  final LeaderBoardRepository leaderBoardRepository;
   final String hostId;
   late String gameResult;
   List<String> solvedTopicIds = [];
   SoloGameController({
     required super.gameSetup,
     required super.topicIds,
-    required this.hostId
+    required this.hostId,
+    required this.topicRepository,
+    required this.movesRepository,
+    required this.leaderBoardRepository,
+    required super.firestore
   });
 
   String getGameResult() => gameResult;
@@ -31,7 +40,7 @@ abstract class SoloGameController extends GameController {
     try {
       final gameId = await super.getGameId();
 
-      await FirebaseFirestore.instance.collection(gameCollection).doc(gameId).set({
+      await firestore.collection(gameCollection).doc(gameId).set({
         "host" : {
           "id" : hostId,
           "fails": 0,
@@ -64,7 +73,7 @@ abstract class SoloGameController extends GameController {
   Future addPointsToRanked () async {
     final host = await getHostInfo();
     final points = host["score"] as int;
-    await addPoints(hostId, points);
+    await leaderBoardRepository.addPoints(hostId, points);
   }
 
   Future addFailToHost() async {

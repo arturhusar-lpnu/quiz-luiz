@@ -1,6 +1,9 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:fluter_prjcts/Blocs/QuestionBloc/question_bloc.dart";
+import "package:fluter_prjcts/Firestore/Question/question.repository.dart";
 import "package:fluter_prjcts/Models/question.dart";
+import "package:fluter_prjcts/Widgets/PopUp/error.popup.dart";
+import "package:fluter_prjcts/context_extension.dart";
 import "package:flutter/material.dart";
 import "package:fluter_prjcts/Router/router.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -25,10 +28,8 @@ class QuestionListState extends State<QuestionListPage> {
   @override
   void initState() {
     super.initState();
-    final firestore = FirebaseFirestore.instance;
-    qBloc = QuestionBloc(firestore: firestore);
+    qBloc = context.maybeRead<QuestionBloc>() ?? QuestionBloc(repository: QuestionRepository(firestore: FirebaseFirestore.instance));
     qBloc.add(SubscribeQuestions(widget.topicId));
-    // context.read<QuestionBloc>().add(SubscribeQuestions(widget.topicId));
   }
 
   void _addQuestion() {
@@ -83,8 +84,18 @@ class QuestionListState extends State<QuestionListPage> {
             ),
 
             Expanded(
-              child: BlocProvider.value(
-                  value: qBloc,
+              child: BlocListener<QuestionBloc, QuestionState>(
+                listener: (context, state) {
+                  if (state is QuestionsLoadFailed) {
+                    showErrorDialog(
+                      context: context,
+                      title: "Error",
+                      message: state.message,
+                      icon: Icons.error,
+                      onRetry: () {}, // or retry logic
+                    );
+                  }
+                },
                   child: BlocProvider.value(
                       value: qBloc,
                       child: BlocBuilder<QuestionBloc, QuestionState>(
@@ -92,12 +103,33 @@ class QuestionListState extends State<QuestionListPage> {
                             if(questionState is QuestionsLoadSuccess) {
                               final q = questionState.questions;
                               if(q.isEmpty) {
-                                const Center(child: Text("No questions"));
+                                return const Center(child: Text("No questions"));
                               } else {
                                 return _buildQuestionList(context, questionState.questions);
                               }
+                            } else if(questionState is QuestionsLoading) {
+                              return const Center(child:
+                                  Column(
+                                    children: [
+                                      Text("Loading questions"),
+
+                                      SizedBox(height: 20,),
+
+                                      CircularProgressIndicator()
+                                    ],
+                                  )
+                              );
+                            } else if (questionState is QuestionsLoadFailed) {
+                               showErrorDialog(
+                                  context: context,
+                                  title: "Error",
+                                  message: "Failed to load questions",
+                                  icon: Icons.error,
+                                  onRetry: () {}
+                              );
+                               return Center();
                             }
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center();
                           }
                       ),
                   ),

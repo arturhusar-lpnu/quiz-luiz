@@ -32,9 +32,7 @@ Future<void> sendGameInviteNotification(String playerId, GameData gameData) asyn
     }),
   );
   if(response.statusCode == 200) {
-    print("Notification sent");
   } else if(response.statusCode == 500) {
-    print("Error sending notification");
   }
 }
 
@@ -53,8 +51,6 @@ Future<void> sendFriendInviteNotification(String playerId, String friendId) asyn
     }),
   );
   if(response.statusCode == 200) {
-    print("[Friend-Invite] Notification sent");
   } else if(response.statusCode == 500) {
-    print("[Friend-Invite] Error sending notification");
   }
 }

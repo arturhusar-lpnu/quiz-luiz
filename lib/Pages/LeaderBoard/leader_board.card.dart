@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluter_prjcts/Models/ranked_player.dart';
-import 'package:fluter_prjcts/Screens/loading_screen.dart';
-import 'package:fluter_prjcts/Widgets/user_image.helper.dart';
 
-class LeaderBoardCard extends StatefulWidget {
+class LeaderBoardCard extends StatelessWidget {
   final RankedPlayer rankedPlayer;
   final VoidCallback onCardTapped;
 
@@ -12,17 +10,6 @@ class LeaderBoardCard extends StatefulWidget {
     required this.rankedPlayer,
     required this.onCardTapped,
   });
-
-  @override
-  State<LeaderBoardCard> createState() => _LeaderBoardCardState();
-}
-
-class _LeaderBoardCardState extends State<LeaderBoardCard> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   String _getOrdinal(int number) {
     if (number >= 11 && number <= 13) return "th";
@@ -57,12 +44,10 @@ class _LeaderBoardCardState extends State<LeaderBoardCard> {
     color: Colors.black,
   );
 
-  Future<ImageProvider> _fetchProfileImage() async{
-    return await fetchProfileImage(widget.rankedPlayer.playerId);
-  }
-
-  Widget buildContent(BuildContext context, ImageProvider profileImage) {
-    return InkWell(
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onCardTapped,
       child: Container(
         decoration: BoxDecoration(
           color: Color(0xFF30323d),
@@ -72,73 +57,57 @@ class _LeaderBoardCardState extends State<LeaderBoardCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-                width: 130,
-                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: _getColor(widget.rankedPlayer.rank),
-                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
-                ),
-                child: Row(
-                    children: [
-                      // Rank & Profile
-                      Row(
-                        children: [
-                          Text("${widget.rankedPlayer.rank}${_getOrdinal(widget.rankedPlayer.rank)}", style: _textStyle()),
-                          const SizedBox(width: 8),
-                          Image(
-                            image: profileImage,
-                            width: 50,
-                            height: 50,
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                      ),
-                    ]
-                )
+              width: 130,
+              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+              decoration: BoxDecoration(
+                color: _getColor(rankedPlayer.rank),
+                borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    "${rankedPlayer.rank}${_getOrdinal(rankedPlayer.rank)}",
+                    style: _textStyle(),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
             ),
-
-            const SizedBox(width: 12),
-
-            /// Questions Count
+            const SizedBox(width: 4),
             Expanded(
-                child: Row(
-                    children: [
-                      Text(
-                        widget.rankedPlayer.username,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+              child: Row(
+                children: [
+                  Text(
+                    rankedPlayer.username,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "${rankedPlayer.points} Points",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: _getColor(rankedPlayer.rank),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Expanded(
-                        child: Text(
-                          "${widget.rankedPlayer.points} Points",
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: _getColor(widget.rankedPlayer.rank),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                    ]
-                )
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-    @override
-    Widget build(BuildContext context) {
-      return LoadingScreen(
-          future: _fetchProfileImage,
-          builder: buildContent, loadingText: "",
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      );
-    }
 }

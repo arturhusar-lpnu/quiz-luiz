@@ -6,6 +6,15 @@ abstract class QuestionState {
 
 class QuestionsInitial extends QuestionState {}
 
+class QuestionsLoading extends QuestionState{}
+
+class QuestionsLoadFailed extends QuestionState {
+  final String message;
+
+  QuestionsLoadFailed(this.message);
+}
+
+
 class QuestionsLoadSuccess extends QuestionState {
   List<Question> questions;
   QuestionsLoadSuccess(this.questions);

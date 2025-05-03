@@ -110,7 +110,6 @@ class NotificationService {
   }
 
   void _handleBackgroundMessage(RemoteMessage message) {
-    print("Background message received");
     if (message.notification != null) {
       final data = message.data;
       if(data["type"] == "game-invite") {

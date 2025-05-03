@@ -6,8 +6,8 @@ import 'package:fluter_prjcts/Models/game.dart';
 import 'package:fluter_prjcts/Models/topic.dart';
 import 'package:fluter_prjcts/Firestore/Topic/topic.firestore.dart';
 
-
 abstract class GameController {
+  final FirebaseFirestore firestore;
   late Game gameSetup;
   late String gameCollection;
   late Set<String> topicIds;
@@ -15,6 +15,7 @@ abstract class GameController {
   GameController({
     required this.gameSetup,
     required this.topicIds,
+    required this.firestore
   }) {
     _getCollection(gameSetup.mode);
   }
@@ -31,7 +32,7 @@ abstract class GameController {
 
   Future<void> addGame(GameType type, GameMode mode) async{
     try {
-      var game = await FirebaseFirestore.instance.collection("games").add({
+      var game = await firestore.collection("games").add({
         'type' : type.name.toLowerCase(),
         'mode': mode.name.toLowerCase(),
       });
@@ -78,9 +79,7 @@ abstract class GameController {
     final gameId = await getGameId();
 
     try {
-      var db = FirebaseFirestore.instance;
-
-      final gameRef = db.collection("games").doc(gameId);
+      final gameRef = firestore.collection("games").doc(gameId);
 
       var gameSnapshot = await gameRef.get();
 
@@ -89,7 +88,7 @@ abstract class GameController {
       }
 
       for(var topicId in topicIds) {
-        await db.collection("game-topics").add({
+        await firestore.collection("game-topics").add({
           'gameId' : gameId,
           'topicId' : topicId,
         });
@@ -112,7 +111,7 @@ abstract class GameController {
   }
 
   Future getGameDoc() async {
-    final doc = await FirebaseFirestore.instance
+    final doc = await firestore
         .collection(gameCollection)
         .doc(gameSetup.id)
         .get();
@@ -125,7 +124,7 @@ abstract class GameController {
 
   Future<DocumentReference<Map<String, dynamic>>>
     getGameDocRef() async {
-    final gameDocRef = FirebaseFirestore.instance
+    final gameDocRef = firestore
         .collection(gameCollection)
         .doc(gameSetup.id);
     return gameDocRef;
@@ -133,7 +132,7 @@ abstract class GameController {
 
   Future<List<Topic>> getTopics() async {
     final gameId = await getGameId();
-    final gameTopicsSnapshot = await FirebaseFirestore.instance
+    final gameTopicsSnapshot = await firestore
         .collection('game-topics')
         .where('gameId', isEqualTo: gameId)
         .get();
@@ -155,7 +154,7 @@ abstract class GameController {
   Future<void> updateStatus(GameStatus status) async {
     try{
       final gameId = await getGameId();
-      await FirebaseFirestore.instance.collection(gameCollection).doc(gameId).update({
+      await firestore.collection(gameCollection).doc(gameId).update({
         "status" : status.name,
       });
     } catch (e) {
@@ -166,7 +165,7 @@ abstract class GameController {
   Future<void> updateCurrentQuestion(String questionId) async {
     try{
       final gameId = await getGameId();
-      await FirebaseFirestore.instance.collection(gameCollection).doc(gameId).update({
+      await firestore.collection(gameCollection).doc(gameId).update({
         "currentQuestion" : questionId,
       });
     } catch (e) {

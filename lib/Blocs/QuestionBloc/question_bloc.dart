@@ -1,17 +1,16 @@
 import "dart:async";
-import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:fluter_prjcts/Models/question.dart";
-import "package:fluter_prjcts/Firestore/Question/question.firestore.dart";
+import "package:fluter_prjcts/Firestore/Question/question.repository.dart";
 part "question_event.dart";
 part "question_state.dart";
 
 
 class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
-  final FirebaseFirestore firestore;
+  final QuestionRepository repository;
   StreamSubscription? _subscription;
 
-  QuestionBloc({required this.firestore}) : super(QuestionsInitial()) {
+  QuestionBloc({required this.repository}) : super(QuestionsInitial()) {
     on<SubscribeQuestions>(_subscribeQuestionsHandler);
     on<QuestionsUpdated>(_updatedQuestionsHandler);
     on<AddNewQuestion>(_addNewQuestionHandler);
@@ -19,7 +18,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   
   void _subscribeQuestionsHandler(SubscribeQuestions e, Emitter emit) {
     _subscription?.cancel();
-    _subscription = firestore
+    //emit(QuestionsLoading());
+    _subscription = repository.firestore
         .collection("questions")
         .where("topicId", isEqualTo: e.topicId)
         .snapshots()
@@ -31,7 +31,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
           add(QuestionsUpdated(questions));
         },
         onError: (error) {
-          throw Exception(error);
+          emit(QuestionsLoadFailed(error.toString()));
+          //throw Exception(error);
         }
     );
   }
@@ -42,7 +43,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
   Future<void> _addNewQuestionHandler(AddNewQuestion e, Emitter emit) async {
     try {
-      await addQuestion(e.topicId, e.content);
+      await repository.addQuestion(e.topicId, e.content);
 
       emit(QuestionAddedSuccess());
 
@@ -50,5 +51,11 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     } catch (e) {
       emit(QuestionAddFailure("Failed to add the question"));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }

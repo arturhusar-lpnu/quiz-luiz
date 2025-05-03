@@ -11,6 +11,9 @@ class CurrentPlayer {
       _player = await getCurrentPlayer();
     }
   }
+  static void setPlayer(Player mockPlayer) {
+    _player = mockPlayer;
+  }
 
   static Player? get player => _player;
 }

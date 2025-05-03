@@ -17,7 +17,9 @@ Future<User> signUpPlayer(String username, String email, String password) async 
         "email": email,
         "createdAt": FieldValue.serverTimestamp(),
       });
-      await addToLeaderBoard(user.uid);
+      final lRepo = LeaderBoardRepository(firestore: FirebaseFirestore.instance);
+
+      await lRepo.addToLeaderBoard(user.uid);
     }
 
 

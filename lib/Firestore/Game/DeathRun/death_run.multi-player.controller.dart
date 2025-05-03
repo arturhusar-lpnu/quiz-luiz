@@ -11,7 +11,7 @@ class DeathRunMultiPlayerController extends MultiPlayerController {
     required super.gameSetup,
     required super.topicIds,
     required super.hostId,
-    required super.opponentId
+    required super.opponentId, required super.firestore
   });
   late List<Question> gameQuestions;
   Map<String, dynamic> host = {};
@@ -26,6 +26,7 @@ class DeathRunMultiPlayerController extends MultiPlayerController {
     }
   }
 
+  @override
   Future init() async{
     await _getQuestions();
     await _getHost();

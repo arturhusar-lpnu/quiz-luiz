@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluter_prjcts/Firestore/FCM/notification.firestore.dart';
 import 'package:fluter_prjcts/Firestore/Game/DeathRun/death_run.multi-player.controller.dart';
 import 'package:fluter_prjcts/Firestore/Game/game.firestore.dart';
@@ -79,6 +80,7 @@ class FinalSetupState extends State<FinalSetupPage> {
     // }
 
     GameController controller = DeathRunMultiPlayerController(
+        firestore: FirebaseFirestore.instance,
         gameSetup: game,
         topicIds: widget.selectedTopicsIds,
         hostId: widget.currentUserId,

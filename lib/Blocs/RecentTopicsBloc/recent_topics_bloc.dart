@@ -16,7 +16,7 @@ class RecentTopicsBloc extends Bloc<RecentTopicsEvent, RecentTopicsState> {
 
   void _subscribeHandler(SubscribeRecentTopics e, Emitter emit) {
     _subscription?.cancel();
-
+    emit(RecentTopicLoading());
     _subscription = firestore
         .collection("recent-topics")
         .where("playerId", isEqualTo: e.playerId)

@@ -14,18 +14,17 @@ class LeaderBoardList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: rankedPlayers.length,
-      itemBuilder: (context, index) {
-        final rankedPlayer = rankedPlayers[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: LeaderBoardCard(
-            rankedPlayer: rankedPlayer,
-            onCardTapped: () {
-            },
-          ),
-        );
-      },
+          itemCount: rankedPlayers.length,
+          itemBuilder: (context, index) {
+            final rankedPlayer = rankedPlayers[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: LeaderBoardCard(
+                rankedPlayer: rankedPlayer,
+                onCardTapped: () {},
+              ),
+            );
+          },
     );
   }
 }
